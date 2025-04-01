@@ -1,10 +1,10 @@
 import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
-import ActivityCard from '../components/ActivityCard';
+import ActivityCard from '../../components/ActivityCard';
 import { Dumbbell, BookOpen, Users } from 'lucide-react-native';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useActivities } from '../context/ActivitiesContext';
+import { useActivities } from '../../context/ActivitiesContext';
 
 export default function Activities() {
   const { language, translations } = useLanguage();

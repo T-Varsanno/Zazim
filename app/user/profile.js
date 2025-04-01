@@ -1,9 +1,9 @@
 import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { Calendar, Award, BarChart3, Settings } from 'lucide-react-native';
-import { userProfile } from '../Data/mockData';
+import { userProfile } from '../../Data/mockData';
 
 export default function Profile() {
   const { language, translations } = useLanguage();

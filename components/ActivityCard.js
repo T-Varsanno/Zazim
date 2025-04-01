@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CheckCircle, Clock } from 'lucide-react-native';
 import { useLanguage } from '../context/LanguageContext';
 import { useRouter } from 'expo-router';
+
+
+
 
 
 export default function ActivityCard({
@@ -21,6 +24,14 @@ export default function ActivityCard({
   const { language, translations } = useLanguage();
   const t = translations[language];
   const isRTL = language === 'he';
+
+  function handleClick() {
+    if (category === 'physical') {
+      router.push('/user/ExerciseCamera');
+    } else {
+      onComplete();
+    }
+  }
 
   return (
     <View style={[styles.card, isRTL && { flexDirection: 'row-reverse' }]}>
@@ -48,7 +59,7 @@ export default function ActivityCard({
             </View>
           ) : (
             
-            <TouchableOpacity onPress={() => router.push('/ExerciseCamera')} style={styles.startButton}>
+            <TouchableOpacity onPress={handleClick} style={styles.startButton}>
               <Text style={styles.startButtonText}>{t.start}</Text>
             </TouchableOpacity>
           )}

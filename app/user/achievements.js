@@ -1,8 +1,8 @@
 import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLanguage } from '../context/LanguageContext';
-import { achievements } from '../Data/mockData';
+import { useLanguage } from '../../context/LanguageContext';
+import { achievements } from '../../Data/mockData';
 
 export default function Achievements() {
   const { language, translations } = useLanguage();
