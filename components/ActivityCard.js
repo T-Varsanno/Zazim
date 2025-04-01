@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CheckCircle, Clock } from 'lucide-react-native';
 import { useLanguage } from '../context/LanguageContext';
+import { useRouter } from 'expo-router';
+
 
 export default function ActivityCard({
   title,
@@ -13,6 +15,9 @@ export default function ActivityCard({
   points,
   onComplete
 }) {
+  
+  const router = useRouter();
+
   const { language, translations } = useLanguage();
   const t = translations[language];
   const isRTL = language === 'he';
@@ -42,7 +47,8 @@ export default function ActivityCard({
               <Text style={styles.completedText}>{t.completed}</Text>
             </View>
           ) : (
-            <TouchableOpacity onPress={onComplete} style={styles.startButton}>
+            
+            <TouchableOpacity onPress={() => router.push('/ExerciseCamera')} style={styles.startButton}>
               <Text style={styles.startButtonText}>{t.start}</Text>
             </TouchableOpacity>
           )}

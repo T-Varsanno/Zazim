@@ -37,6 +37,7 @@ function TabLayout() {
       ];
 
   return (
+    
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#4CC9F0',
@@ -57,6 +58,14 @@ function TabLayout() {
           }}
         />
       ))}
+      <Tabs.Screen
+        name="ExerciseCamera"
+        options={{
+          href: null, // Don't show in the bottom tab bar
+          tabBarStyle: { display: 'none' },
+          headerShown: false,
+        }}
+      />
     </Tabs>
   );
 }
