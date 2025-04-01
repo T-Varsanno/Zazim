@@ -7,7 +7,7 @@ import { useNavigation } from 'expo-router';
 
 export default function ExerciseCamera() {
   const [hasPermission, setHasPermission] = useState(false);
-  const devices = useCameraDevice('front');
+  const devices = useCameraDevice('back');
   const device = devices;
   const navigation = useNavigation();
 
@@ -15,7 +15,7 @@ export default function ExerciseCamera() {
   const frameProcessor = useFrameProcessor((frame) => {
     'worklet';
     // Placeholder for processing each frame
-    console.log('Processing frame...');
+    //console.log('Processing frame...');
   }, []);
 
   useEffect(() => {

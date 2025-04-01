@@ -5,6 +5,7 @@ import { LanguageProvider, useLanguage } from '../context/LanguageContext';
 import { ActivitiesProvider } from '../context/ActivitiesContext';
 import { Home, User, Dumbbell, Award } from 'lucide-react-native';
 import LanguageToggle from '../components/LanguageToggle';
+import { UserProvider } from '../context/UserContext';
 
 function TabLayout() {
   const { language, translations } = useLanguage();
@@ -39,7 +40,7 @@ function TabLayout() {
   return (
     
     <Tabs
-      screenOptions={{
+      screenOptions={{ 
         tabBarActiveTintColor: '#4CC9F0',
         tabBarLabelStyle: { fontSize: 12 },
         tabBarStyle: { paddingBottom: 4, height: 60 },
@@ -66,16 +67,43 @@ function TabLayout() {
           headerShown: false,
         }}
       />
+      <Tabs.Screen
+        name="handler/assign"
+        options={{
+          href: null, // Don't show in the bottom tab bar
+          tabBarStyle: { display: 'none' },
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="handler/progress"
+        options={{
+          href: null, // Don't show in the bottom tab bar
+          tabBarStyle: { display: 'none' },
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="handler/users"
+        options={{
+          href: null, // Don't show in the bottom tab bar
+          tabBarStyle: { display: 'none' },
+          headerShown: false,
+        }}
+      />
     </Tabs>
+    
   );
 }
 
 export default function RootLayout() {
   return (
-    <LanguageProvider>
-      <ActivitiesProvider> 
-        <TabLayout />
-      </ActivitiesProvider>
-    </LanguageProvider>
+    <UserProvider>
+      <LanguageProvider>
+        <ActivitiesProvider> 
+          <TabLayout />
+        </ActivitiesProvider>
+      </LanguageProvider>
+    </UserProvider>
   );
 }
