@@ -2,18 +2,26 @@ import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, View, Text, Alert, PermissionsAndroid, Platform } from 'react-native';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import * as FileSystem from 'expo-file-system';
+import { PressableOpacity } from 'react-native-pressable-opacity'
+import IonIcon from 'react-native-vector-icons/Ionicons'
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useActivities } from '../../context/ActivitiesContext';
 
 export default function ExerciseCamera() {
   const [hasPermission, setHasPermission] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [cameraPermission,setCameraPossition] = useState('front')
   const cameraRef = useRef(null);
   const navigation = useNavigation();
-  const { activityId } = useLocalSearchParams(); // 👈 get passed activity ID
+  const { activityId } = useLocalSearchParams(); // get passed activity ID
   const { markActivityCompleted } = useActivities();
+  const device = useCameraDevice(cameraPermission);
 
-  const device = useCameraDevice('back');
+  const onFlipCamera =()=>{
+    cameraPermission==='front'?
+    setCameraPossition('back'):
+    setCameraPossition('front')
+  }
 
 
   // Request camera permissions
@@ -101,6 +109,11 @@ export default function ExerciseCamera() {
         isActive={true}
         photo={true}
       />
+      <View style={styles.overlay}>
+        <PressableOpacity onPress={onFlipCamera} style={styles.flipButton} disabledOpacity={0.4}>
+          <IonIcon name="camera-reverse" color="white" size={24} />
+        </PressableOpacity>
+      </View>
     </View>
   );
 }
@@ -114,5 +127,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: 40,
+    right: 20,
+  },
+  flipButton: {
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
   },
 });
