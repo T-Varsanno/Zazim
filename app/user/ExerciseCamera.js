@@ -2,33 +2,37 @@ import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, View, Text, Alert, PermissionsAndroid, Platform } from 'react-native';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import * as FileSystem from 'expo-file-system';
-import { PressableOpacity } from 'react-native-pressable-opacity'
-import IonIcon from 'react-native-vector-icons/Ionicons'
+import { PressableOpacity } from 'react-native-pressable-opacity';
+import IonIcon from 'react-native-vector-icons/Ionicons';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useActivities } from '../../context/ActivitiesContext';
 
 export default function ExerciseCamera() {
   const [hasPermission, setHasPermission] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
-  const [cameraPermission,setCameraPossition] = useState('front')
+  const [cameraPermission, setCameraPermission] = useState('front');
   const cameraRef = useRef(null);
+  const captureIntervalRef = useRef(null);
+
   const navigation = useNavigation();
-  const { activityId } = useLocalSearchParams(); // get passed activity ID
+  const { activityId } = useLocalSearchParams();
   const { markActivityCompleted } = useActivities();
   const device = useCameraDevice(cameraPermission);
 
-  const onFlipCamera =()=>{
-    cameraPermission==='front'?
-    setCameraPossition('back'):
-    setCameraPossition('front')
-  }
-
-
-  // Request camera permissions
+  const onFlipCamera = () => {
+    if (isCapturing) {
+      stopCapturing();       // Stop the interval
+      setIsCapturing(false); // Update the button state
+    }
+  
+    setCameraPermission(prev => (prev === 'front' ? 'back' : 'front'));
+  };
+  
+  // Request camera permission
   useEffect(() => {
     (async () => {
-      const cameraPermission = await Camera.requestCameraPermission();
-      if (cameraPermission === 'authorized') {
+      const permission = await Camera.requestCameraPermission();
+      if (permission === 'authorized') {
         setHasPermission(true);
       } else if (Platform.OS === 'android') {
         const granted = await PermissionsAndroid.request(
@@ -39,50 +43,57 @@ export default function ExerciseCamera() {
     })();
   }, []);
 
-  // Frame capturing logic
-  useEffect(() => {
-    let interval;
+  const startCapturing = () => {
+    if (!cameraRef.current) return;
 
-    if (hasPermission && device && !isCapturing) {
-      setIsCapturing(true);
+    captureIntervalRef.current = setInterval(async () => {
+      try {
+        const photo = await cameraRef.current.takePhoto({
+          qualityPrioritization: 'speed',
+          flash: 'off',
+          skipMetadata: true,
+        });
 
-      interval = setInterval(async () => {
-        try {
-          if (cameraRef.current) {
-            const photo = await cameraRef.current.takePhoto({
-              qualityPrioritization: 'speed',
-              flash: 'off',
-              skipMetadata: true,
-            });
+        const base64 = await FileSystem.readAsStringAsync(`file://${photo.path}`, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
 
-            const base64 = await FileSystem.readAsStringAsync(`file://${photo.path}`, {
-              encoding: FileSystem.EncodingType.Base64,
-            });
+        const response = await fetch('http://172.31.144.1:8000/analyze-frame', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: base64 }),
+        });
 
-            const response = await fetch('http://192.168.1.139:8000/analyze-frame', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ image: base64 }),
-            });
+        const result = await response.json();
+        console.log('📸 Pose result:', result);
 
-            const result = await response.json();
-            console.log('📸 Pose result:', result);
-
-            if (result.result === 'pose_detected') {
-              clearInterval(interval);
-              Alert.alert('🎉 Success', 'Pose detected!');
-              markActivityCompleted(Number(activityId)); // Mark complete
-              navigation.goBack(); // Go back to activities
-            }
-          }
-        } catch (err) {
-          console.error('Capture or upload error:', err);
+        if (result.result === 'pose_detected') {
+          stopCapturing();
+          Alert.alert('🎉 Success', 'Pose detected!');
+          markActivityCompleted(Number(activityId));
+          navigation.goBack();
         }
-      }, 500); // Send 2 per second
-    }
+      } catch (err) {
+        console.error('Capture or upload error:', err);
+      }
+    }, 500);
+  };
 
-    return () => clearInterval(interval);
-  }, [hasPermission, device]);
+  const stopCapturing = () => {
+    if (captureIntervalRef.current) {
+      clearInterval(captureIntervalRef.current);
+      captureIntervalRef.current = null;
+    }
+  };
+
+  const toggleCapture = () => {
+    if (isCapturing) {
+      stopCapturing();
+    } else {
+      startCapturing();
+    }
+    setIsCapturing(prev => !prev);
+  };
 
   if (!hasPermission) {
     return (
@@ -113,6 +124,9 @@ export default function ExerciseCamera() {
         <PressableOpacity onPress={onFlipCamera} style={styles.flipButton} disabledOpacity={0.4}>
           <IonIcon name="camera-reverse" color="white" size={24} />
         </PressableOpacity>
+        <PressableOpacity onPress={toggleCapture} style={styles.captureButton} disabledOpacity={0.4}>
+          <IonIcon name={isCapturing ? 'square' : 'camera'} color="white" size={28} />
+        </PressableOpacity>
       </View>
     </View>
   );
@@ -131,12 +145,26 @@ const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',
     bottom: 40,
-    right: 20,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 20,
   },
   flipButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
     backgroundColor: 'rgba(0,0,0,0.6)',
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
+    zIndex: 10,
+  },
+  captureButton: {
+    backgroundColor: 'rgba(255, 0, 0, 0.6)',
+    padding: 16,
+    borderRadius: 40,
   },
 });
