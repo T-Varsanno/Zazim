@@ -16,7 +16,6 @@ export default function Achievements() {
         <Text style={[styles.title, { textAlign: isRTL ? 'right' : 'left' }]}>
           {t.achievements}
         </Text>
-
         {/* Achievements Grid */}
         <View style={styles.grid}>
           {achievements.map((a) => (
