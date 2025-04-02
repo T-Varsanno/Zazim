@@ -4,7 +4,7 @@ import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import * as FileSystem from 'expo-file-system';
 import { PressableOpacity } from 'react-native-pressable-opacity';
 import IonIcon from 'react-native-vector-icons/Ionicons';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useActivities } from '../../context/ActivitiesContext';
 
 export default function ExerciseCamera() {
@@ -13,22 +13,21 @@ export default function ExerciseCamera() {
   const [cameraPermission, setCameraPermission] = useState('front');
   const cameraRef = useRef(null);
   const captureIntervalRef = useRef(null);
-
-  const navigation = useNavigation();
+  const hasDetectedRef = useRef(false); // 👈 Add detection flag
+  const router = useRouter();
   const { activityId } = useLocalSearchParams();
   const { markActivityCompleted } = useActivities();
   const device = useCameraDevice(cameraPermission);
 
   const onFlipCamera = () => {
     if (isCapturing) {
-      stopCapturing();       // Stop the interval
-      setIsCapturing(false); // Update the button state
+      stopCapturing();
+      setIsCapturing(false);
     }
-  
+
     setCameraPermission(prev => (prev === 'front' ? 'back' : 'front'));
   };
-  
-  // Request camera permission
+
   useEffect(() => {
     (async () => {
       const permission = await Camera.requestCameraPermission();
@@ -46,6 +45,8 @@ export default function ExerciseCamera() {
   const startCapturing = () => {
     if (!cameraRef.current) return;
 
+    hasDetectedRef.current = false; // 👈 Reset detection flag
+
     captureIntervalRef.current = setInterval(async () => {
       try {
         const photo = await cameraRef.current.takePhoto({
@@ -58,7 +59,7 @@ export default function ExerciseCamera() {
           encoding: FileSystem.EncodingType.Base64,
         });
 
-        const response = await fetch('http://172.31.144.1:8000/analyze-frame', {
+        const response = await fetch('http://192.168.1.139:8000/analyze-frame', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64 }),
@@ -67,11 +68,16 @@ export default function ExerciseCamera() {
         const result = await response.json();
         console.log('📸 Pose result:', result);
 
-        if (result.result === 'pose_detected') {
+        // 👇 Only handle the first successful detection
+        if (result.result === 'pose_detected' && !hasDetectedRef.current) {
+          hasDetectedRef.current = true;
           stopCapturing();
           Alert.alert('🎉 Success', 'Pose detected!');
+          setIsCapturing(false);
           markActivityCompleted(Number(activityId));
-          navigation.goBack();
+          router.push({
+            pathname: '/user/activities',
+          });
         }
       } catch (err) {
         console.error('Capture or upload error:', err);
@@ -121,9 +127,11 @@ export default function ExerciseCamera() {
         photo={true}
       />
       <View style={styles.overlay}>
-        <PressableOpacity onPress={onFlipCamera} style={styles.flipButton} disabledOpacity={0.4}>
-          <IonIcon name="camera-reverse" color="white" size={24} />
-        </PressableOpacity>
+        {!isCapturing && (
+          <PressableOpacity onPress={onFlipCamera} style={styles.flipButton} disabledOpacity={0.4}>
+            <IonIcon name="camera-reverse" color="white" size={24} />
+          </PressableOpacity>
+        )}
         <PressableOpacity onPress={toggleCapture} style={styles.captureButton} disabledOpacity={0.4}>
           <IonIcon name={isCapturing ? 'square' : 'camera'} color="white" size={28} />
         </PressableOpacity>
