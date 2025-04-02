@@ -1,51 +1,80 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, PermissionsAndroid, Platform } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { StyleSheet, View, Text, Alert, PermissionsAndroid, Platform } from 'react-native';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
-import { useFrameProcessor } from 'react-native-vision-camera';
-import 'react-native-reanimated';
-import { useNavigation } from 'expo-router';
+import * as FileSystem from 'expo-file-system';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useActivities } from '../../context/ActivitiesContext';
 
 export default function ExerciseCamera() {
   const [hasPermission, setHasPermission] = useState(false);
-  const devices = useCameraDevice('back');
-  const device = devices;
+  const [isCapturing, setIsCapturing] = useState(false);
+  const cameraRef = useRef(null);
   const navigation = useNavigation();
+  const { activityId } = useLocalSearchParams(); // 👈 get passed activity ID
+  const { markActivityCompleted } = useActivities();
 
-  // Optional: If you're using a frame processor for extra work:
-  const frameProcessor = useFrameProcessor((frame) => {
-    'worklet';
-    // Placeholder for processing each frame
-    //console.log('Processing frame...');
-  }, []);
+  const device = useCameraDevice('back');
 
+
+  // Request camera permissions
   useEffect(() => {
     (async () => {
-      try {
-        // First attempt: Request permission using Vision Camera's API
-        const cameraPermission = await Camera.requestCameraPermission();
-        console.log("Vision Camera permission result:", cameraPermission);
-        if (cameraPermission === 'authorized') {
-          setHasPermission(true);
-        } else if (Platform.OS === 'android') {
-          // If not authorized and on Android, try PermissionsAndroid as fallback
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CAMERA,
-            {
-              title: "Camera Permission",
-              message: "This app needs access to your camera to work properly.",
-              buttonNeutral: "Ask Me Later",
-              buttonNegative: "Cancel",
-              buttonPositive: "OK"
-            }
-          );
-          console.log("PermissionsAndroid result:", granted);
-          setHasPermission(granted === PermissionsAndroid.RESULTS.GRANTED);
-        }
-      } catch (error) {
-        console.error("Error requesting camera permission:", error);
+      const cameraPermission = await Camera.requestCameraPermission();
+      if (cameraPermission === 'authorized') {
+        setHasPermission(true);
+      } else if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA
+        );
+        setHasPermission(granted === PermissionsAndroid.RESULTS.GRANTED);
       }
     })();
   }, []);
+
+  // Frame capturing logic
+  useEffect(() => {
+    let interval;
+
+    if (hasPermission && device && !isCapturing) {
+      setIsCapturing(true);
+
+      interval = setInterval(async () => {
+        try {
+          if (cameraRef.current) {
+            const photo = await cameraRef.current.takePhoto({
+              qualityPrioritization: 'speed',
+              flash: 'off',
+              skipMetadata: true,
+            });
+
+            const base64 = await FileSystem.readAsStringAsync(`file://${photo.path}`, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+
+            const response = await fetch('http://192.168.1.139:8000/analyze-frame', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ image: base64 }),
+            });
+
+            const result = await response.json();
+            console.log('📸 Pose result:', result);
+
+            if (result.result === 'pose_detected') {
+              clearInterval(interval);
+              Alert.alert('🎉 Success', 'Pose detected!');
+              markActivityCompleted(Number(activityId)); // Mark complete
+              navigation.goBack(); // Go back to activities
+            }
+          }
+        } catch (err) {
+          console.error('Capture or upload error:', err);
+        }
+      }, 500); // Send 2 per second
+    }
+
+    return () => clearInterval(interval);
+  }, [hasPermission, device]);
 
   if (!hasPermission) {
     return (
@@ -58,7 +87,7 @@ export default function ExerciseCamera() {
   if (!device) {
     return (
       <View style={styles.centered}>
-        <Text>Loading camera...please</Text>
+        <Text>Loading camera...</Text>
       </View>
     );
   }
@@ -66,11 +95,11 @@ export default function ExerciseCamera() {
   return (
     <View style={styles.container}>
       <Camera
+        ref={cameraRef}
         style={StyleSheet.absoluteFill}
         device={device}
         isActive={true}
-        frameProcessor={frameProcessor}
-        frameProcessorFps={5}
+        photo={true}
       />
     </View>
   );

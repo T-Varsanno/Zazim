@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 
 
 export default function ActivityCard({
+  id,
   title,
   description,
   icon: Icon,
@@ -27,7 +28,10 @@ export default function ActivityCard({
 
   function handleClick() {
     if (category === 'physical') {
-      router.push('/user/ExerciseCamera');
+      router.push({
+        pathname: '/user/ExerciseCamera',
+        params: { activityId: id }, // You’ll need to receive this as a prop too!
+      });
     } else {
       onComplete();
     }
