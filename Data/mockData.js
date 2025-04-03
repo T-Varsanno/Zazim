@@ -132,6 +132,20 @@ export const userProfile = {
   },
 };
 
+export const mockLeaderboard = [
+  { id: 1, name: 'גל גדות', points: 480, level: 7, currentStreak: 5},
+  { id: 2, name: 'רוני כהן', points: 390, level: 6, currentStreak: 19 },
+  { id: 3, name: 'נועה לוי', points: 320, level: 5 , currentStreak: 8},
+  { id: 4, name: 'איתי דביר', points: 290, level: 5 , currentStreak: 27},
+  { id: 5, name: 'תמר שלם', points: 240, level: 4 , currentStreak: 10},
+  { id: 6, name: 'אייל שני', points: 550, level: 1 , currentStreak: 100},
+  { id: 7, name: 'חיים כהן', points: 240, level: 4 , currentStreak: 53},
+  { id: 8, name: 'חיים נחמן', points: 310, level: 7 , currentStreak: 41},
+  { id: 9, name: 'עומר אדם', points: 10, level: 9 , currentStreak: 6},
+  { id: 10, name: 'דניס רודמן', points: 100, level: 10 , currentStreak: 102},
+  { id: 11, name: "מייקל ג'ורדן", points: 1200, level: 2 , currentStreak: 1},
+];
+
 export const storeItems = [
   {
     storeId: '1',

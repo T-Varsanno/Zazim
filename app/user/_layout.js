@@ -20,7 +20,7 @@ function TabLayout() {
   const screens = [
         { name: 'profile', icon: User, label: "פרופיל" },
         { name: 'store', icon: ShoppingCart, label: "חנות" },
-        { name: 'achievements', icon: Award, label: "תחרות" },
+        { name: 'competitions', icon: Award, label: "תחרות" },
         { name: 'activities', icon: Dumbbell, label: "GPT" },
         { name: 'index', icon: Home, label: "בית" },
       ]
