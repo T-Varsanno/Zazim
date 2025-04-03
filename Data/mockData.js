@@ -151,10 +151,10 @@ export const storeItems = [
     storeId: '1',
     storeName: 'חנות מתנות',
     items: [
-      { id: 1, name: 'כובע מגניב', cost: 50 },
-      { id: 2, name: 'חולצה בלעדית', cost: 100 },
-      { id: 3, name: '2 חולצה בלעדית', cost: 10 },
-      { id: 4, name: '3 חולצה בלעדית', cost: 5 },
+      { id: 1, name: 'חולצה בלעדית', cost: 50, image: require('../assets/images/shirt.png') },
+      { id: 2, name: 'בקבוק מים', cost: 30, image: require('../assets/images/bottle.png') },
+      { id: 3, name: 'שובר סטנדאפ', cost: 80, image: require('../assets/images/standup_coupon.png') },
+      { id: 4, name: 'כרטיס לסרט', cost: 60, image: require('../assets/images/movie_ticket.png') },
     ],
   },
   {

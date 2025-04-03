@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import {View,Text,StyleSheet,FlatList,TouchableOpacity,Alert, Image, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { storeItems, userProfile } from '../../Data/mockData';
 import { useActivities } from '../../context/ActivitiesContext';
+import { PressableOpacity } from 'react-native-pressable-opacity';
 
 export default function Store() {
   const { activities } = useActivities();
+
   const [user, setUser] = useState({
     name: userProfile.name,
     points: userProfile.totalPoints,
@@ -16,36 +24,38 @@ export default function Store() {
     if (user.ownedItems.includes(item.id)) return;
 
     if (user.points >= item.cost) {
-      Alert.alert('🎁 נרכש', `רכשת את ${item.name}`);
+      alert(`🎁 נרכש: ${item.name}`);
       setUser((prev) => ({
         ...prev,
         points: prev.points - item.cost,
         ownedItems: [...prev.ownedItems, item.id],
       }));
     } else {
-      Alert.alert('😅 אין מספיק נקודות', 'השלם עוד פעילויות כדי לצבור נקודות.');
+      alert('😅 אין מספיק נקודות. השלם עוד פעילויות כדי לצבור נקודות.');
     }
   };
+
+  // Flatten storeItems to a single list
+  const flatStoreItems = storeItems.flatMap((store) =>
+    store.items.map((item) => ({ ...item, storeName: store.storeName }))
+  );
 
   const renderItem = ({ item }) => {
     const isOwned = user.ownedItems.includes(item.id);
     const canAfford = user.points >= item.cost;
-  
+
     return (
       <View style={styles.card}>
+        <Text style={styles.storeName}>{item.storeName}</Text>
         <View style={styles.imageContainer}>
-          <Image
-            source={item.image}
-            style={styles.itemImage}
-            resizeMode="cover"
-          />
+          <Image source={item.image} style={styles.itemImage} resizeMode="cover" />
         </View>
         <View style={styles.cardContent}>
           <Text style={styles.itemName}>{item.name}</Text>
           <Text style={styles.itemCost}>
-            {isOwned ? '✅ נרכש' : `$${item.cost}`}
+            {isOwned ? '✅ נרכש' : `${item.cost} נקודות`}
           </Text>
-          <TouchableOpacity
+          <PressableOpacity
             onPress={() => handlePurchase(item)}
             disabled={isOwned || !canAfford}
             style={[
@@ -56,51 +66,43 @@ export default function Store() {
             <Text style={styles.buyButtonText}>
               {isOwned ? 'נרכש' : 'קנה אותי !'}
             </Text>
-          </TouchableOpacity>
+          </PressableOpacity>
         </View>
       </View>
     );
   };
-  
-
-  const renderStore = ({ item: store }) => (
-    <View style={{ marginBottom: 20 }}>
-      <Text style={styles.storeName}>{store.storeName}</Text>
-
-      <FlatList
-        horizontal
-        data={store.items}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        contentContainerStyle={styles.horizontalList}
-        showsHorizontalScrollIndicator={false}
-      />
-    </View>
-  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.container}>
-          <Text style={styles.points}>נקודות נוכחיות: {user.points}</Text>
-          {storeItems.map((store) => (
-            <View key={store.storeId} style={{ marginBottom: 30 }}>
-              {renderStore({ item: store })}
-            </View>
-          ))}
-          <Text style={styles.footer}>צריך עוד נקודות?</Text>
-          <Text style={styles.footerSub}>
-            נשארו לך {activities.filter((a) => !a.completed).length} פעילויות פתוחות להשלמה.
-          </Text>
-        </View>
-      </ScrollView>
+      <FlatList
+        data={flatStoreItems}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        numColumns={2}
+        columnWrapperStyle={styles.gridRow}
+        ListHeaderComponent={
+          <View style={styles.header}>
+            <Text style={styles.points}>נקודות נוכחיות: {user.points}</Text>
+          </View>
+        }
+        ListFooterComponent={
+          <View style={styles.footerContainer}>
+            <Text style={styles.footer}>צריך עוד נקודות?</Text>
+            <Text style={styles.footerSub}>
+              נשארו לך {activities.filter((a) => !a.completed).length} פעילויות פתוחות להשלמה.
+            </Text>
+          </View>
+        }
+        contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 16 }}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    width: 220,
+    flex: 1,
+    margin: 8,
     backgroundColor: 'white',
     borderRadius: 12,
     overflow: 'hidden',
@@ -109,11 +111,18 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
     elevation: 5,
-    marginRight: 10,
+  },
+  storeName: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    padding: 6,
+    paddingLeft: 10,
+    color: '#555',
+    backgroundColor: '#f5f5f5',
   },
   imageContainer: {
     width: '100%',
-    height: 140,
+    height: 120,
     backgroundColor: '#eee',
   },
   itemImage: {
@@ -147,11 +156,23 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     backgroundColor: '#aaa',
   },
-  scrollContainer: {
-    paddingBottom: 40,
+  gridRow: {
+    justifyContent: 'space-between',
+  },
+  header: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  points: {
+    fontSize: 18,
+    color: '#555',
+    fontWeight: '600',
+  },
+  footerContainer: {
+    marginTop: 30,
+    alignItems: 'center',
   },
   footer: {
-    marginTop: 30,
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -162,13 +183,4 @@ const styles = StyleSheet.create({
     color: '#555',
     marginTop: 4,
   },
-  points: {
-    color: '#555',
-    textAlign: 'center'
-  },
-  storeName: {
-    fontWeight: 'bold',
-    marginLeft :20,
-    textAlign: 'left'
-  }
 });
