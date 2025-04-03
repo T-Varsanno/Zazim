@@ -98,7 +98,7 @@ export default function ExerciseCamera() {
       if (result.result === 'movement_detected') {
         Alert.alert('🎉 Success', 'Movement detected!');
         markActivityCompleted(Number(activityId));
-        router.push({ pathname: '/user/activities' });
+        router.push({ pathname: '/user' });
       } else {
         Alert.alert('⚠️ Try again', 'No movement detected.');
       }

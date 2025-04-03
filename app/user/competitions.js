@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { mockLeaderboard } from '../../Data/mockData';
+import { mockLeaderboard, userProfile } from '../../Data/mockData';
 
 export default function Competitions() {
   const [selectedTab, setSelectedTab] = useState('individual');
@@ -10,11 +10,9 @@ export default function Competitions() {
   const individualSorted = [...mockLeaderboard.individual].sort((a, b) => b.points - a.points);
   const topThreeIndividuals = individualSorted.slice(0, 3);
   const restIndividuals = individualSorted.slice(3);
-  
 
-  const groupSorted = mockLeaderboard.groups.sort((a, b) => b.points - a.points);
-
-
+  const groupSorted = [...mockLeaderboard.groups].sort((a, b) => b.points - a.points);
+  const myGroupId = userProfile.groupId;
 
   const toggleExpand = (groupId) => {
     setExpandedGroupId(expandedGroupId === groupId ? null : groupId);
@@ -38,55 +36,80 @@ export default function Competitions() {
     }
   };
 
-  const renderIndividualCard = (item, rank) => (
-    <View style={styles.simpleCard}>
-      <Text style={styles.rank}>{rank}</Text>
-      <View style={styles.info}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.details}>Level {item.level} • {item.points} נק'</Text>
-      </View>
-    </View>
-  );
-
-  const renderIndividualPodium = () => {
-    const podium = [
-      { ...topThreeIndividuals[1], emoji: '🥈', size: styles.podiumSecond },
-      { ...topThreeIndividuals[0], emoji: '🥇', size: styles.podiumFirst },
-      { ...topThreeIndividuals[2], emoji: '🥉', size: styles.podiumThird },
-    ];
+  const renderIndividualCard = (item, rank) => {
+    const isUser = item.id === userProfile.id;
 
     return (
-      <View style={styles.topThreeContainer}>
-        {podium.map((item) => (
-          <View key={item.id} style={[styles.topCard, item.size]}>
-            <Text style={styles.podiumEmoji}>{item.emoji}</Text>
-            <Text style={styles.topName}>{item.name}</Text>
-            <Text style={styles.topPoints}>{item.points} נק'</Text>
-          </View>
-        ))}
+      <View style={[
+        styles.simpleCard,
+        isUser && styles.userGroupHighlight
+      ]}>
+        <Text style={styles.rank}>{rank}</Text>
+        <View style={styles.info}>
+          <Text style={styles.name}>
+            {item.name} {isUser && '⭐'}
+          </Text>
+          <Text style={styles.details}>Level {item.level} • {item.points} נק'</Text>
+        </View>
       </View>
     );
   };
 
+  const renderIndividualPodium = () => {
+  const podium = [
+    { item: topThreeIndividuals[1], emoji: '🥈', style: styles.podiumSecond },
+    { item: topThreeIndividuals[0], emoji: '🥇', style: styles.podiumFirst },
+    { item: topThreeIndividuals[2], emoji: '🥉', style: styles.podiumThird },
+  ];
+
+  return (
+    <View style={styles.topThreeContainer}>
+      {podium.map(({ item, emoji, style }) => {
+        const isUser = item.id === userProfile.id;
+        return (
+          <View
+            key={item.id}
+            style={[
+              styles.topCard,
+              style,
+              isUser && styles.userGroupHighlight // 💙 Add highlight if it's the user
+            ]}
+          >
+            <Text style={styles.podiumEmoji}>{emoji}</Text>
+            <Text style={styles.topName}>
+              {item.name} {isUser && '⭐'}
+            </Text>
+            <Text style={styles.topPoints}>{item.points} נק'</Text>
+          </View>
+        );
+      })}
+    </View>
+  );
+};
+
   const renderGroup = ({ item, index }) => {
     const isTopThree = index < 3;
-  
+    const isUserGroup = item.id === myGroupId;
+
     return (
       <TouchableOpacity
         onPress={() => toggleExpand(item.id)}
         style={[
           styles.groupCard,
           isTopThree && { borderColor: getBorderColor(index), borderWidth: 2 },
+          isUserGroup && styles.userGroupHighlight,
         ]}
       >
         <View style={styles.groupHeader}>
           {isTopThree && <Text style={styles.groupTrophy}>{getTrophy(index)}</Text>}
           <View style={styles.groupInfo}>
-            <Text style={styles.groupName}>{item.name}</Text>
+            <Text style={styles.groupName}>
+              {index + 1}. {item.name}
+            </Text>
             <Text style={styles.groupPoints}>{item.points} נק'</Text>
           </View>
         </View>
-  
+
         {expandedGroupId === item.id && (
           <View style={styles.memberList}>
             {item.members && item.members.length > 0 ? (
@@ -232,6 +255,9 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
+  },
+  userGroupHighlight: {
+    backgroundColor: '#c0e4ff',
   },
   groupHeader: {
     flexDirection: 'row',

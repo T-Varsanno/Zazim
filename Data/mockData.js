@@ -3,26 +3,16 @@ import { Dumbbell, BookOpen, Users, Navigation, Clock, Brain, Heart, HandHeart }
 export const activities = [
   {
     id: 1,
-    title: 'מתיחות בוקר',
-    description: 'מתיחות קלות לגב ולכתפיים',
-    icon: Dumbbell,
-    category: 'physical',
+    title: 'משחק חשיבה',
+    description: 'פתור חידת הגיון או תשבץ קצר',
+    icon: Brain,
+    category: 'cognitive',
     completed: false,
-    duration: 15,
-    points: 20,
+    duration: 20,
+    points: 30,
   },
   {
     id: 2,
-    title: 'זמן קריאה',
-    description: 'קרא פרק מהספר האהוב עליך',
-    icon: BookOpen,
-    category: 'cognitive',
-    completed: false,
-    duration: 30,
-    points: 25,
-  },
-  {
-    id: 3,
     title: 'שיחה עם חבר',
     description: 'נהל שיחה או צא לארוחת צהריים עם חבר',
     icon: Users,
@@ -32,19 +22,9 @@ export const activities = [
     points: 15,
   },
   {
-    id: 4,
-    title: 'מתיחות בוקר',
-    description: 'מתיחות קלות לגב ולכתפיים',
-    icon: Dumbbell,
-    category: 'physical',
-    completed: false,
-    duration: 15,
-    points: 20,
-  },
-  {
-    id: 5,
+    id: 3,
     title: 'זמן קריאה',
-    description:  'קרא פרק מהספר האהוב עליך',
+    description: 'קרא פרק מהספר האהוב עליך',
     icon: BookOpen,
     category: 'cognitive',
     completed: false,
@@ -52,23 +32,13 @@ export const activities = [
     points: 25,
   },
   {
-    id: 6,
-    title: 'מתיחות בוקר',
-    description: 'מתיחות קלות לגב ולכתפיים',
-    icon: Dumbbell,
+    id: 4,
+    title: 'בצע תרגיל פיזיו',
+    description: 'בצע את התרגול הפיזי שנקבע לך היום',
+    icon: Dumbbell, // Consider using Dumbbell or a custom exercise icon
     category: 'physical',
     completed: false,
     duration: 15,
-    points: 20,
-  },
-  {
-    id: 7,
-    title:'זמן קריאה',
-    description: 'קרא פרק מהספר האהוב עליך',
-    icon: BookOpen,
-    category: 'cognitive',
-    completed: false,
-    duration: 30,
     points: 25,
   },
 ];
@@ -117,8 +87,8 @@ export const achievements = [
     unlocked: true,
   },
 ];
-
 export const userProfile = {
+  id:4,
   name: 'דוד לוי',
   level: 5,
   currentStreak: 7,
@@ -130,15 +100,15 @@ export const userProfile = {
     cognitive: 8,
     social: 3,
   },
+  groupId: 'E', 
 };
-
 
 export const mockLeaderboard = {
   individual: [
     { id: 1, name: 'גל גדות', points: 480, level: 7, currentStreak: 5},
     { id: 2, name: 'רוני כהן', points: 390, level: 6, currentStreak: 19 },
     { id: 3, name: 'נועה לוי', points: 320, level: 5 , currentStreak: 8},
-    { id: 4, name: 'איתי דביר', points: 290, level: 5 , currentStreak: 27},
+    { id: 4, name: 'דוד לוי', points: 500, level: 5 , currentStreak: 7},
     { id: 5, name: 'תמר שלם', points: 240, level: 4 , currentStreak: 10},
     { id: 6, name: 'אייל שני', points: 550, level: 1 , currentStreak: 100},
     { id: 7, name: 'חיים כהן', points: 240, level: 4 , currentStreak: 53},
@@ -154,7 +124,7 @@ export const mockLeaderboard = {
       points: 1300,
       level: 3,
       members: [
-        { id: 1, name: 'אורי', contribution: 500 },
+        { id: 1, name: 'דוויד', contribution: 500 },
         { id: 2, name: 'דנה', contribution: 400 },
         { id: 3, name: 'עידו', contribution: 400 },
       ],
@@ -165,7 +135,7 @@ export const mockLeaderboard = {
       points: 1220,
       level: 4,
       members: [
-        { id: 4, name: 'רוני', contribution: 620 },
+        { id: 9, name: 'רוני', contribution: 620 },
         { id: 5, name: 'תום', contribution: 600 },
       ],
     },
@@ -195,7 +165,8 @@ export const mockLeaderboard = {
       points: 500,
       level: 1,
       members: [
-        { id: 10, name: 'מאיה', contribution: 500 },
+        { id: 10, name: 'מאיה', contribution: 0 },
+        { id: 4, name: 'דוד', contribution: 500 },
       ],
     },
     {
