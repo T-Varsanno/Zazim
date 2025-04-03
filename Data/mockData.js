@@ -123,7 +123,7 @@ export const userProfile = {
   level: 5,
   currentStreak: 7,
   longestStreak: 14,
-  totalPoints: 345,
+  totalPoints: 30,
   nextLevelPoints: 500,
   activityStats: {
     physical: 12,
@@ -131,3 +131,9 @@ export const userProfile = {
     social: 3,
   },
 };
+
+export const storeItems = [
+  { id: 1, name: 'כובע קסמים', cost: 10 },
+  { id: 2, name: 'נעלי ריצה', cost: 20 },
+  { id: 3, name: 'משקפי שמש', cost: 30 },
+];

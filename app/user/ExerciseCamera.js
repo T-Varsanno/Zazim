@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, Alert, PermissionsAndroid, Platform } from 'react-native';
+import { StyleSheet, View, Text, Alert, PermissionsAndroid, Platform, ActivityIndicator } from 'react-native';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import * as FileSystem from 'expo-file-system';
 import { PressableOpacity } from 'react-native-pressable-opacity';
@@ -10,6 +10,7 @@ import { useActivities } from '../../context/ActivitiesContext';
 export default function ExerciseCamera() {
   const [hasPermission, setHasPermission] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [cameraPermission, setCameraPermission] = useState('front');
   const cameraRef = useRef(null);
   const captureIntervalRef = useRef(null);
@@ -63,7 +64,7 @@ export default function ExerciseCamera() {
       } catch (err) {
         console.error('Upload error:', err);
       }
-    }, 100); // every 500ms
+    }, 100); // every 100ms (10 FPS)
   };
 
   const stopCapturing = async () => {
@@ -71,6 +72,8 @@ export default function ExerciseCamera() {
       clearInterval(captureIntervalRef.current);
       captureIntervalRef.current = null;
     }
+
+    setLoading(true); // 🌀 Show loading
 
     try {
       const res = await fetch('http://132.73.217.98:8000/finish-session', {
@@ -96,6 +99,7 @@ export default function ExerciseCamera() {
     }
 
     setIsCapturing(false);
+    setLoading(false); // 🛑 Hide loading
   };
 
   const toggleCapture = () => {
@@ -133,6 +137,7 @@ export default function ExerciseCamera() {
         isActive={true}
         photo={true}
       />
+
       <View style={styles.overlay}>
         {!isCapturing && (
           <PressableOpacity onPress={onFlipCamera} style={styles.flipButton} disabledOpacity={0.4}>
@@ -143,6 +148,12 @@ export default function ExerciseCamera() {
           <IonIcon name={isCapturing ? 'square' : 'radio-button-on'} color="white" size={28} />
         </PressableOpacity>
       </View>
+
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#ffffff" />
+        </View>
+      )}
     </View>
   );
 }
@@ -181,5 +192,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 0, 0, 0.6)',
     padding: 16,
     borderRadius: 40,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
   },
 });
