@@ -1,8 +1,8 @@
 import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Calendar, Award, BarChart3, Settings } from 'lucide-react-native';
-import { userProfile } from '../../Data/mockData';
+import { Calendar, Award, BarChart3, Settings,Trophy } from 'lucide-react-native';
+import { userProfile, achievements } from '../../Data/mockData';
 
 export default function Profile() {
   t = {
@@ -84,6 +84,30 @@ export default function Profile() {
               {progressBar(item.value, item.color)}
             </View>
           ))}
+        </View>
+
+        {/* Achievements Horizontal Scroll */}
+        <View style={styles.achievementsSection}>
+          <View style={styles.achievementsTitleRow}>
+            <Trophy size={18} color="#FFD700" />
+            <Text style={styles.achievementsTitle}>{t.achievements}</Text>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.achievementsScroll}
+          >
+            {achievements.map((a) => (
+              <View
+                key={a.id}
+                style={[styles.achievementCard, { backgroundColor: a.unlocked ? '#4CC9F0' : '#ccc' }]}
+              >
+                <a.icon size={20} color="#fff" />
+                <Text style={styles.achievementTitle}>{a.title}</Text>
+                <Text style={styles.achievementDesc}>{a.description}</Text>
+              </View>
+            ))}
+          </ScrollView>
         </View>
 
         {/* Settings Button */}
@@ -213,5 +237,41 @@ const styles = StyleSheet.create({
   settingsText: {
     fontSize: 14,
     color: '#666',
+  },
+  achievementsSection: {
+    marginBottom: 24,
+  },
+  achievementsTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  achievementsScroll: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  achievementCard: {
+    width: 140,
+    borderRadius: 16,
+    padding: 12,
+    alignItems: 'center',
+  },
+  achievementTitle: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 6,
+  },
+  achievementDesc: {
+    fontSize: 11,
+    color: '#f0f0f0',
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  achievementsTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 8,
   },
 });
