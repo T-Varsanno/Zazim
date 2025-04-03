@@ -39,6 +39,7 @@
     "react-native": "0.76.7",
     "react-native-confetti-cannon": "^1.5.2",
     "react-native-gesture-handler": "~2.20.2",
+    "react-native-markdown-display": "^7.0.2",
     "react-native-mediapipe": "^0.6.0",
     "react-native-pressable-opacity": "^1.0.10",
     "react-native-progress": "^5.0.1",

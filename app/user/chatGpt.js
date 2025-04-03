@@ -7,8 +7,11 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import resourceLinks from './resourceLinks';
+import Markdown from 'react-native-markdown-display';
 
 export default function ChatGPT() {
   const [question, setQuestion] = useState('');
@@ -25,35 +28,67 @@ export default function ChatGPT() {
       const result = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization':'Bearer ***************************************************', // ⬅️ Replace with your actual key
-          'HTTP-Referer': 'https://yourprojectname.com', // optional but good practice
+          Authorization: 'Bearer ***********', // ⬅️ Replace with your actual key
+          'HTTP-Referer': 'https://yourprojectname.com', // optional
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            model: 'deepseek/deepseek-chat-v3-0324:free',
+          model: 'deepseek/deepseek-chat-v3-0324:free',
           messages: [
-                {
-                  role: 'system',
-                  content: `You are a smart assistant that helps users by answering questions in Hebrow based on the following knowledge:
-                            - This app is for 
-                            - You should always end with a helpful tip
-                            - When asked for links, use only the provided list of trusted sites.`,
-                },
-            { role: 'user', content: question }],
+            {
+              role: 'system',
+              content: `You are a smart assistant that communicates in Hebrew and helps users who are recovering
+              from injury and going through rehabilitation. Your main job is to assist them in locating,
+              understanding, and filling out necessary documents and forms related to their rehabilitation process.
+              These documents are located in a set of trusted links (only use links from the approved list).
+              Always provide your answer in a clear, empathetic,
+              and encouraging tone suitable for users who may be in physical or emotional distress.
+              
+              אתה עוזר חכם שמדבר בעברית ומסייע למשתקמים בתהליך שיקום.
+              תפקידך לעזור באיתור, הבנה ומילוי טפסים רלוונטיים.
+              תשתמש רק בקישורים האלה: ${Object.values(resourceLinks.trustedLinks).join(', ')}.
+              אם נדרש מספר טלפון לעזרה – תוכל להציע את אחד מהבאים: ${resourceLinks.supportNumbers
+                .map((n) => n.name + ': ' + n.number)
+                .join(', ')}.`,
+            },
+            { role: 'user', content: question },
+          ],
         }),
       });
 
       const data = await result.json();
       console.log('OpenRouter response:', data);
-        const answer = data.choices && data.choices.length > 0
-        ? data.choices[0].message.content
-        : '⚠️ No valid answer returned.';
+      console.log('Message content:', data.choices?.[0]?.message?.content);
+      const answer =
+        data.choices && data.choices.length > 0
+          ? data.choices[0].message.content
+          : '⚠️ No valid answer returned.';
       setResponse(answer);
     } catch (error) {
       setResponse('⚠️ Error: ' + error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  // 🔗 Make links clickable
+  const renderResponseWithLinks = (text) => {
+    const parts = text.split(/(https?:\/\/[^\s]+)/g); // Split by links
+    return parts.map((part, index) => {
+      if (part.match(/https?:\/\/[^\s]+/)) {
+        return (
+          <Text
+            key={index}
+            style={{ color: '#4CC9F0', textDecorationLine: 'underline' }}
+            onPress={() => Linking.openURL(part)}
+          >
+            {part}
+          </Text>
+        );
+      } else {
+        return <Text key={index}>{part}</Text>;
+      }
+    });
   };
 
   return (
@@ -74,7 +109,12 @@ export default function ChatGPT() {
         </TouchableOpacity>
 
         {loading && <ActivityIndicator size="large" color="#4CC9F0" style={{ marginTop: 20 }} />}
-        {response !== '' && <Text style={styles.response}>{response}</Text>}
+
+        {response !== '' && (
+          <View style={styles.response}>
+            <Markdown>{response}</Markdown>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -119,5 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     padding: 12,
     borderRadius: 10,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
   },
 });
