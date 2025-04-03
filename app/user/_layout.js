@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import { I18nManager, Platform } from 'react-native';
 import { useEffect } from 'react';
 import { ActivitiesProvider } from '../../context/ActivitiesContext';
-import { Home, User, Dumbbell, Award ,ShoppingCart} from 'lucide-react-native';
+import { Home, User, Info, Trophy ,ShoppingCart} from 'lucide-react-native';
 import { UserProvider } from '../../context/UserContext';
 
 function TabLayout() {
@@ -20,8 +20,8 @@ function TabLayout() {
   const screens = [
         { name: 'profile', icon: User, label: "פרופיל" },
         { name: 'store', icon: ShoppingCart, label: "חנות" },
-        { name: 'competitions', icon: Award, label: "תחרות" },
-        { name: 'chatGpt', icon: Dumbbell, label: "GPT" },
+        { name: 'competitions', icon: Trophy, label: "תחרות" },
+        { name: 'chatGpt', icon: Info, label: "עזרא Ai" },
         { name: 'index', icon: Home, label: "בית" },
       ]
   return (
@@ -29,8 +29,9 @@ function TabLayout() {
     <Tabs
       screenOptions={{ 
         tabBarActiveTintColor: '#4CC9F0',
-        tabBarLabelStyle: { fontSize: 12 },
         tabBarStyle: { paddingBottom: 4, height: 60 },
+        tabBarShowLabel: false,
+        tabBarIconStyle: { justifyContent: 'center', alignItems: 'center', marginTop: 6 }, // 👈 This helps with centering
         headerTitleAlign: 'center',
       }}
     >
@@ -47,6 +48,14 @@ function TabLayout() {
       ))}
       <Tabs.Screen
         name="ExerciseCamera"
+        options={{
+          href: null, // Don't show in the bottom tab bar
+          tabBarStyle: { display: 'none' },
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="resourceLinks"
         options={{
           href: null, // Don't show in the bottom tab bar
           tabBarStyle: { display: 'none' },

@@ -44,7 +44,7 @@ export default function ChatGPT() {
               Always provide your answer in a clear, empathetic,
               and encouraging tone suitable for users who may be in physical or emotional distress.
               
-              אתה עוזר חכם שמדבר בעברית ומסייע למשתקמים בתהליך שיקום.
+              אתה עוזר חכם שמדבר בעברית, קוראים לו עזרא, ומסייע למשתקמים בתהליך שיקום.
               תפקידך לעזור באיתור, הבנה ומילוי טפסים רלוונטיים.
               תשתמש רק בקישורים האלה: ${Object.values(resourceLinks.trustedLinks).join(', ')}.
               אם נדרש מספר טלפון לעזרה – תוכל להציע את אחד מהבאים: ${resourceLinks.supportNumbers
@@ -94,8 +94,7 @@ export default function ChatGPT() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>שאל את GPT</Text>
-
+        <Text style={styles.title}>שאל את עזרא!</Text>
         <TextInput
           style={styles.input}
           value={question}
@@ -103,7 +102,6 @@ export default function ChatGPT() {
           placeholder="מה אתה רוצה לשאול?"
           multiline
         />
-
         <TouchableOpacity style={styles.button} onPress={askChatGPT}>
           <Text style={styles.buttonText}>שלח שאלה</Text>
         </TouchableOpacity>
