@@ -63,7 +63,7 @@ export default function ExerciseCamera() {
       } catch (err) {
         console.error('Upload error:', err);
       }
-    }, 500); // every 500ms
+    }, 100); // every 500ms
   };
 
   const stopCapturing = async () => {
