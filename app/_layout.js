@@ -1,5 +1,4 @@
 import { Slot } from 'expo-router';
-import { LanguageProvider } from '../context/LanguageContext';
 import { UserProvider, useUser } from '../context/UserContext';
 import { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
@@ -29,10 +28,8 @@ function Redirector() {
 export default function RootLayout() {
   return (
     <UserProvider>
-      <LanguageProvider>
         <Slot />
         <Redirector />
-      </LanguageProvider>
     </UserProvider>
   );
 }

@@ -1,15 +1,21 @@
 import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLanguage } from '../../context/LanguageContext';
 import { Calendar, Award, BarChart3, Settings } from 'lucide-react-native';
 import { userProfile } from '../../Data/mockData';
 
 export default function Profile() {
-  const { language, translations } = useLanguage();
-  const t = translations[language];
-  const isRTL = language === 'he';
-
+  t = {
+      greeting: 'שלום',
+      home: 'בית',
+      activities: 'פעילויות',
+      achievements: 'הישגים',
+      profile: 'פרופיל',
+      start: 'התחל',
+      completed: 'הושלם',
+      points: 'נקודות',
+      todaysGoal: 'מטרת היום',
+    }
 
   const progressBar = (value, color) => (
     <View style={styles.barWrapper}>
@@ -24,10 +30,10 @@ export default function Profile() {
         <View style={styles.avatarSection}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>
-              {userProfile.name[language].split(' ').map(n => n[0]).join('')}
+              {userProfile.name.split(' ').map(n => n[0]).join('')}
             </Text>
           </View>
-          <Text style={styles.name}>{userProfile.name[language]}</Text>
+          <Text style={styles.name}>{userProfile.name}</Text>
           <View style={styles.levelBadge}>
             <Text style={styles.levelText}>Level {userProfile.level}</Text>
           </View>
@@ -36,42 +42,42 @@ export default function Profile() {
         {/* Stats */}
         <View style={styles.grid}>
           <View style={styles.card}>
-            <View style={[styles.cardHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+            <View style={[styles.cardHeader]}>
               <Calendar size={16} color="#4CC9F0" />
-              <Text style={styles.cardTitle}>{isRTL ? 'רצף נוכחי' : 'Current Streak'}</Text>
+              <Text style={styles.cardTitle}>{'רצף נוכחי'}</Text>
             </View>
             <Text style={styles.cardValue}>{userProfile.currentStreak} {t.days}</Text>
             <Text style={styles.cardSubtitle}>
-              {isRTL ? 'הכי ארוך:' : 'Longest:'} {userProfile.longestStreak} {t.days}
+              {'הכי ארוך:'} {userProfile.longestStreak} {t.days}
             </Text>
           </View>
 
           <View style={styles.card}>
-            <View style={[styles.cardHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+            <View style={[styles.cardHeader]}>
               <Award size={16} color="#FF6B6B" />
-              <Text style={styles.cardTitle}>{isRTL ? 'סה"כ נקודות' : 'Total Points'}</Text>
+              <Text style={styles.cardTitle}>{'סה"כ נקודות'}</Text>
             </View>
             <Text style={styles.cardValue}>{userProfile.totalPoints}</Text>
             <Text style={styles.cardSubtitle}>
-              {userProfile.nextLevelPoints - userProfile.totalPoints} {isRTL ? 'לרמה הבאה' : 'to next level'}
+              {userProfile.nextLevelPoints - userProfile.totalPoints} {'לרמה הבאה'}
             </Text>
           </View>
         </View>
 
         {/* Activity Stats */}
         <View style={styles.statsSection}>
-          <View style={[styles.statsHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+          <View style={[styles.statsHeader]}>
             <BarChart3 size={18} color="#57CC99" />
-            <Text style={styles.cardTitle}>{isRTL ? 'סטטיסטיקת פעילויות' : 'Activity Stats'}</Text>
+            <Text style={styles.cardTitle}>{'סטטיסטיקת פעילויות'}</Text>
           </View>
 
           {[
-            { label: isRTL ? 'פיזי' : 'Physical', value: 52, count: userProfile.activityStats.physical, color: '#4CC9F0' },
-            { label: isRTL ? 'קוגניטיבי' : 'Cognitive', value: 34, count: userProfile.activityStats.cognitive, color: '#9B5DE5' },
-            { label: isRTL ? 'חברתי' : 'Social', value: 14, count: userProfile.activityStats.social, color: '#FF6B6B' },
+            { label: 'פיזי', value: 52, count: userProfile.activityStats.physical, color: '#4CC9F0' },
+            { label: 'קוגניטיבי', value: 34, count: userProfile.activityStats.cognitive, color: '#9B5DE5' },
+            { label: 'חברתי' , value: 14, count: userProfile.activityStats.social, color: '#FF6B6B' },
           ].map((item, index) => (
             <View key={index} style={styles.statBlock}>
-              <View style={[styles.statRow, isRTL && { flexDirection: 'row-reverse' }]}>
+              <View style={[styles.statRow]}>
                 <Text style={styles.statLabel}>{item.label}</Text>
                 <Text style={styles.statCount}>{item.count}</Text>
               </View>
@@ -83,7 +89,7 @@ export default function Profile() {
         {/* Settings Button */}
         <View style={styles.settings}>
           <Settings size={18} color="#666" />
-          <Text style={styles.settingsText}>{isRTL ? 'הגדרות' : 'Settings'}</Text>
+          <Text style={styles.settingsText}>{'הגדרות'}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

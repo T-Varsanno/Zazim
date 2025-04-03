@@ -1,42 +1,28 @@
 import { Tabs } from 'expo-router';
 import { I18nManager, Platform } from 'react-native';
 import { useEffect } from 'react';
-import { LanguageProvider, useLanguage } from '../../context/LanguageContext';
 import { ActivitiesProvider } from '../../context/ActivitiesContext';
 import { Home, User, Dumbbell, Award } from 'lucide-react-native';
-import LanguageToggle from '../../components/LanguageToggle';
 import { UserProvider } from '../../context/UserContext';
 
 function TabLayout() {
-  const { language, translations } = useLanguage();
-  const t = translations[language];
-
-  const isRTL = language === 'he';
 
   useEffect(() => {
     I18nManager.allowRTL(true);
-    I18nManager.forceRTL(isRTL);
+    I18nManager.forceRTL(true);
 
     if (Platform.OS === 'android') {
       // Need to reload app for changes to fully apply
       // Expo doesn't support live forceRTL, but at least sets layout direction
     }
-  }, [language]);
+  }, []);
 
-  const screens = isRTL
-    ? [
-        { name: 'profile', icon: User, label: t.profile },
-        { name: 'achievements', icon: Award, label: t.achievements },
-        { name: 'activities', icon: Dumbbell, label: t.activities },
-        { name: 'index', icon: Home, label: t.home },
+  const screens = [
+        { name: 'profile', icon: User, label: "profile" },
+        { name: 'achievements', icon: Award, label: "achievements" },
+        { name: 'activities', icon: Dumbbell, label: "activities" },
+        { name: 'index', icon: Home, label: "home" },
       ]
-    : [
-        { name: 'index', icon: Home, label: t.home },
-        { name: 'activities', icon: Dumbbell, label: t.activities },
-        { name: 'achievements', icon: Award, label: t.achievements },
-        { name: 'profile', icon: User, label: t.profile },
-      ];
-
   return (
     
     <Tabs
@@ -45,7 +31,6 @@ function TabLayout() {
         tabBarLabelStyle: { fontSize: 12 },
         tabBarStyle: { paddingBottom: 4, height: 60 },
         headerTitleAlign: 'center',
-        headerRight: () => <LanguageToggle />,
       }}
     >
       {screens.map(({ name, icon: Icon, label }) => (
@@ -75,11 +60,9 @@ function TabLayout() {
 export default function RootLayout() {
   return (
     <UserProvider>
-      <LanguageProvider>
-        <ActivitiesProvider> 
-          <TabLayout />
-        </ActivitiesProvider>
-      </LanguageProvider>
+      <ActivitiesProvider> 
+        <TabLayout />
+      </ActivitiesProvider>
     </UserProvider>
   );
 }

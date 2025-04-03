@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CheckCircle, Clock } from 'lucide-react-native';
-import { useLanguage } from '../context/LanguageContext';
 import { useRouter } from 'expo-router';
 
 
@@ -21,10 +20,18 @@ export default function ActivityCard({
 }) {
   
   const router = useRouter();
+  const t = {
+    greeting: 'שלום',
+    home: 'בית',
+    activities: 'פעילויות',
+    achievements: 'הישגים',
+    profile: 'פרופיל',
+    start: 'התחל',
+    completed: 'הושלם',
+    points: 'נקודות',
+    todaysGoal: 'מטרת היום',
+  }
 
-  const { language, translations } = useLanguage();
-  const t = translations[language];
-  const isRTL = language === 'he';
 
   function handleClick() {
     if (category === 'physical') {
@@ -38,19 +45,19 @@ export default function ActivityCard({
   }
 
   return (
-    <View style={[styles.card, isRTL && { flexDirection: 'row-reverse' }]}>
+    <View style={[styles.card]}>
       <View style={[styles.iconWrapper, { backgroundColor: getCategoryColor(category) }]}>
         <Icon size={20} color="#fff" />
       </View>
 
       <View style={{ flex: 1 }}>
-        <View style={[styles.titleRow, isRTL && { flexDirection: 'row-reverse' }]}>
-          <Text style={styles.title}>{title[language]}</Text>
+        <View style={[styles.titleRow]}>
+          <Text style={styles.title}>{title}</Text>
           <Text style={styles.points}>{points} {t.points}</Text>
         </View>
-        <Text style={styles.description}>{description[language]}</Text>
+        <Text style={styles.description}>{description}</Text>
 
-        <View style={[styles.footer, isRTL && { flexDirection: 'row-reverse' }]}>
+        <View style={[styles.footer]}>
           <View style={styles.duration}>
             <Clock size={14} color="#888" />
             <Text style={styles.durationText}>{duration} min</Text>

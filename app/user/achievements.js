@@ -1,19 +1,26 @@
 import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLanguage } from '../../context/LanguageContext';
 import { achievements } from '../../Data/mockData';
 
 export default function Achievements() {
-  const { language, translations } = useLanguage();
-  const t = translations[language];
-  const isRTL = language === 'he';
+  t = {
+    greeting: 'שלום',
+    home: 'בית',
+    activities: 'פעילויות',
+    achievements: 'הישגים',
+    profile: 'פרופיל',
+    start: 'התחל',
+    completed: 'הושלם',
+    points: 'נקודות',
+    todaysGoal: 'מטרת היום',
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
         {/* Page Title */}
-        <Text style={[styles.title, { textAlign: isRTL ? 'right' : 'left' }]}>
+        <Text style={[styles.title]}>
           {t.achievements}
         </Text>
         {/* Achievements Grid */}
@@ -21,7 +28,7 @@ export default function Achievements() {
           {achievements.map((a) => (
             <View
               key={a.id}
-              style={[styles.card, isRTL && { alignItems: 'flex-end' }]}
+              style={[styles.card]}
             >
               <View
                 style={[
@@ -34,18 +41,17 @@ export default function Achievements() {
               <Text
                 style={[
                   styles.badgeTitle,
-                  { textAlign: isRTL ? 'right' : 'center' },
                 ]}
               >
-                {language === 'he' ? a.title_he : a.title}
+                {a.title}
               </Text>
               <Text
                 style={[
                   styles.badgeDesc,
-                  { textAlign: isRTL ? 'right' : 'center' },
+                  { textAlign:'center' },
                 ]}
               >
-                {language === 'he' ? a.description_he : a.description}
+                {a.description}
               </Text>
             </View>
           ))}

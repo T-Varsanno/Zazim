@@ -1,17 +1,24 @@
 import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import ActivityCard from '../../components/ActivityCard';
-import { useLanguage } from '../../context/LanguageContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useActivities } from '../../context/ActivitiesContext';
 import * as Progress from 'react-native-progress'; // Make sure to install this
 
 export default function Activities() {
-  const { language, translations } = useLanguage();
+  t = {
+      greeting: 'שלום',
+      home: 'בית',
+      activities: 'פעילויות',
+      achievements: 'הישגים',
+      profile: 'פרופיל',
+      start: 'התחל',
+      completed: 'הושלם',
+      points: 'נקודות',
+      todaysGoal: 'מטרת היום',
+    }
+  
   const { activities, markActivityCompleted } = useActivities();
-  const t = translations[language];
-  const isRTL = language === 'he';
-
   const completed = activities.filter((a) => a.completed);
   const notCompleted = activities.filter((a) => !a.completed);
 
@@ -20,7 +27,7 @@ export default function Activities() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={[styles.title, { textAlign: isRTL ? 'right' : 'left' }]}>
+        <Text style={[styles.title]}>
           {t.activities}
         </Text>
 
@@ -36,7 +43,7 @@ export default function Activities() {
         />
 
         {notCompleted.length > 0 && (
-          <Text style={[styles.sectionHeader, { textAlign: isRTL ? 'right' : 'left' }]}>
+          <Text style={[styles.sectionHeader]}>
             {t.stillToDo || 'Still To Do'}
           </Text>
         )}
@@ -49,7 +56,7 @@ export default function Activities() {
         ))}
 
         {completed.length > 0 && (
-          <Text style={[styles.sectionHeader, { textAlign: isRTL ? 'right' : 'left' }]}>
+          <Text style={[styles.sectionHeader]}>
             {t.completed || 'Completed'}
           </Text>
         )}

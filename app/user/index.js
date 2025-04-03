@@ -4,25 +4,32 @@ import ActivityCard from '../../components/ActivityCard';
 
 import { Dumbbell, BookOpen } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLanguage } from '../../context/LanguageContext';
 import { useActivities } from '../../context/ActivitiesContext';
 import {  userProfile } from '../../Data/mockData';
 
 export default function Index() {
-  const { language, translations } = useLanguage();
   const { activities, markActivityCompleted } = useActivities();
-  const t = translations[language];
-  const isRTL = language === 'he';
   // Show just today's top 2–3 activities
   const todaysActivities = activities.slice(0, 2);
+  t = {
+    greeting: 'שלום',
+    home: 'בית',
+    activities: 'פעילויות',
+    achievements: 'הישגים',
+    profile: 'פרופיל',
+    start: 'התחל',
+    completed: 'הושלם',
+    points: 'נקודות',
+    todaysGoal: 'מטרת היום',
+  }
 
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
     <ScrollView contentContainerStyle={styles.container}>
       {/* Greeting Header */}
-      <View style={[styles.header, isRTL && { flexDirection: 'row-reverse' }]}>
-        <Text style={styles.title}>{t.greeting}, {userProfile.name[language]}!</Text>
+      <View style={[styles.header]}>
+        <Text style={styles.title}>{t.greeting}, {userProfile.name}!</Text>
         <View style={styles.levelBadge}>
           <Text style={styles.levelText}>Level {userProfile.level}</Text>
         </View>
@@ -30,7 +37,7 @@ export default function Index() {
 
       {/* Section Title */}
       <View style={{ marginTop: 20 }}>
-        <Text style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+        <Text style={[styles.sectionTitle]}>
           {t.todaysGoal}
         </Text>
 
