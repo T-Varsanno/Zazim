@@ -27,11 +27,10 @@ function TabLayout() {
   return (
     
     <Tabs
-      screenOptions={{ 
+    screenOptions={{ 
         tabBarActiveTintColor: '#4CC9F0',
+        tabBarLabelStyle: { fontSize: 12 },
         tabBarStyle: { paddingBottom: 4, height: 60 },
-        tabBarShowLabel: false,
-        tabBarIconStyle: { justifyContent: 'center', alignItems: 'center', marginTop: 6 }, // 👈 This helps with centering
         headerTitleAlign: 'center',
       }}
     >
