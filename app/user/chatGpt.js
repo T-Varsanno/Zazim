@@ -8,6 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Linking,
+  Image
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import resourceLinks from './resourceLinks';
@@ -94,7 +95,14 @@ export default function ChatGPT() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>שאל את עזרא!</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <Image
+            source={require('../../assets/images/Ezra_ai.png')} 
+            style={{ width: 40, height: 40, marginRight: 12, marginBottom: 10 }}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>שאל את עזרא!</Text>
+        </View>
         <TextInput
           style={styles.input}
           value={question}
