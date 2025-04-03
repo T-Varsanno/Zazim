@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import { I18nManager, Platform } from 'react-native';
 import { useEffect } from 'react';
 import { ActivitiesProvider } from '../../context/ActivitiesContext';
-import { Home, User, Dumbbell, Award } from 'lucide-react-native';
+import { Home, User, Dumbbell, Award ,ShoppingCart} from 'lucide-react-native';
 import { UserProvider } from '../../context/UserContext';
 
 function TabLayout() {
@@ -19,8 +19,9 @@ function TabLayout() {
 
   const screens = [
         { name: 'profile', icon: User, label: "פרופיל" },
+        { name: 'store', icon: ShoppingCart, label: "חנות" },
         { name: 'achievements', icon: Award, label: "תחרות" },
-        { name: 'activities', icon: Dumbbell, label: "פעילות" },
+        { name: 'activities', icon: Dumbbell, label: "GPT" },
         { name: 'index', icon: Home, label: "בית" },
       ]
   return (
