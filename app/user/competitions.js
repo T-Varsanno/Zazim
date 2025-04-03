@@ -1,33 +1,63 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { mockLeaderboard } from '../../Data/mockData';
 
-const sortedLeaderboard = [...mockLeaderboard].sort((a, b) => b.points - a.points);
-const topThree = sortedLeaderboard.slice(0, 3);
-const rest = sortedLeaderboard.slice(3);
-
 export default function Competitions() {
-  const renderCard = (item, rank) => (
-    <View style={styles.card}>
+  const [selectedTab, setSelectedTab] = useState('individual');
+  const [expandedGroupId, setExpandedGroupId] = useState(null);
+
+  const individualSorted = [...mockLeaderboard.individual].sort((a, b) => b.points - a.points);
+  const topThreeIndividuals = individualSorted.slice(0, 3);
+  const restIndividuals = individualSorted.slice(3);
+  
+
+  const groupSorted = mockLeaderboard.groups.sort((a, b) => b.points - a.points);
+
+
+
+  const toggleExpand = (groupId) => {
+    setExpandedGroupId(expandedGroupId === groupId ? null : groupId);
+  };
+
+  const getBorderColor = (index) => {
+    switch (index) {
+      case 0: return '#FFD700';
+      case 1: return '#C0C0C0';
+      case 2: return '#CD7F32';
+      default: return '#ddd';
+    }
+  };
+
+  const getTrophy = (index) => {
+    switch (index) {
+      case 0: return '🏆';
+      case 1: return '🥈';
+      case 2: return '🥉';
+      default: return '';
+    }
+  };
+
+  const renderIndividualCard = (item, rank) => (
+    <View style={styles.simpleCard}>
       <Text style={styles.rank}>{rank}</Text>
       <View style={styles.info}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.details}>Level {item.level}  •  {item.points} נק'</Text>
+        <Text style={styles.details}>Level {item.level} • {item.points} נק'</Text>
       </View>
     </View>
   );
 
-  const renderTopThree = () => {
+  const renderIndividualPodium = () => {
     const podium = [
-      { ...topThree[1], emoji: '🥈', size: styles.podiumSecond },
-      { ...topThree[0], emoji: '🥇', size: styles.podiumFirst },
-      { ...topThree[2], emoji: '🥉', size: styles.podiumThird },
+      { ...topThreeIndividuals[1], emoji: '🥈', size: styles.podiumSecond },
+      { ...topThreeIndividuals[0], emoji: '🥇', size: styles.podiumFirst },
+      { ...topThreeIndividuals[2], emoji: '🥉', size: styles.podiumThird },
     ];
 
     return (
       <View style={styles.topThreeContainer}>
-        {podium.map((item, index) => (
+        {podium.map((item) => (
           <View key={item.id} style={[styles.topCard, item.size]}>
             <Text style={styles.podiumEmoji}>{item.emoji}</Text>
             <Text style={styles.topName}>{item.name}</Text>
@@ -38,21 +68,85 @@ export default function Competitions() {
     );
   };
 
+  const renderGroup = ({ item, index }) => {
+    const isTopThree = index < 3;
+  
+    return (
+      <TouchableOpacity
+        onPress={() => toggleExpand(item.id)}
+        style={[
+          styles.groupCard,
+          isTopThree && { borderColor: getBorderColor(index), borderWidth: 2 },
+        ]}
+      >
+        <View style={styles.groupHeader}>
+          {isTopThree && <Text style={styles.groupTrophy}>{getTrophy(index)}</Text>}
+          <View style={styles.groupInfo}>
+            <Text style={styles.groupName}>{item.name}</Text>
+            <Text style={styles.groupPoints}>{item.points} נק'</Text>
+          </View>
+        </View>
+  
+        {expandedGroupId === item.id && (
+          <View style={styles.memberList}>
+            {item.members && item.members.length > 0 ? (
+              item.members.map((member) => (
+                <View key={member.id} style={styles.memberItem}>
+                  <Text style={styles.memberName}>{member.name}</Text>
+                  <Text style={styles.memberPoints}>{member.contribution} נק'</Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.noMembers}>אין חברים להצגה</Text>
+            )}
+          </View>
+        )}
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.page}>
-      {/* Fixed Podium Section */}
-      <View style={styles.fixedTop}>
-        {renderTopThree()}
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity
+          style={[styles.toggleButton, selectedTab === 'individual' && styles.toggleActive]}
+          onPress={() => setSelectedTab('individual')}
+        >
+          <Text style={[styles.toggleText, selectedTab === 'individual' && styles.toggleTextActive]}>
+            דירוג אישי 🧍
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.toggleButton, selectedTab === 'group' && styles.toggleActive]}
+          onPress={() => setSelectedTab('group')}
+        >
+          <Text style={[styles.toggleText, selectedTab === 'group' && styles.toggleTextActive]}>
+            דירוג קבוצתי 👥
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Scrollable list for 4th place and on */}
-      <FlatList
-        data={rest}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item, index }) => renderCard(item, index + 4)}
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={true}
-      />
+      {selectedTab === 'individual' ? (
+        <>
+          <View style={styles.fixedTop}>{renderIndividualPodium()}</View>
+          <FlatList
+            data={restIndividuals}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => renderIndividualCard(item, index + 4)}
+            contentContainerStyle={styles.scrollContainer}
+            showsVerticalScrollIndicator={false}
+          />
+        </>
+      ) : (
+        <>
+          <FlatList
+            data={groupSorted}
+            keyExtractor={(item) => item.id}
+            renderItem={renderGroup}
+            contentContainerStyle={styles.scrollContainer}
+          />
+        </>
+      )}
     </SafeAreaView>
   );
 }
@@ -62,12 +156,36 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f9f9f9',
   },
-  fixedTop: {
-    paddingTop: 10,
+  toggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+    backgroundColor: '#eee',
+    borderRadius: 10,
+    marginHorizontal: 20,
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  toggleActive: {
+    backgroundColor: '#fff',
+    elevation: 2,
+  },
+  toggleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#888',
+  },
+  toggleTextActive: {
+    color: '#000',
+  },
+  scrollContainer: {
     paddingHorizontal: 20,
-    backgroundColor: '#f9f9f9',
-    zIndex: 0,
-    elevation: 1,
+    paddingBottom: 20,
+    paddingTop: 10,
   },
   topThreeContainer: {
     flexDirection: 'row',
@@ -102,18 +220,65 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
     marginTop: 4,
+    textAlign: 'center',
   },
   topPoints: {
     fontSize: 12,
     color: '#555',
     marginTop: 2,
   },
-  scrollContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-    paddingTop: 10,
+  groupCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
   },
-  card: {
+  groupHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  groupTrophy: {
+    fontSize: 28,
+    marginRight: 10,
+  },
+  groupInfo: {
+    flex: 1,
+  },
+  groupName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  groupPoints: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 4,
+  },
+  memberList: {
+    marginTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    paddingTop: 8,
+  },
+  memberItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 4,
+  },
+  memberName: {
+    fontSize: 14,
+    color: '#333',
+  },
+  memberPoints: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  noMembers: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+    paddingVertical: 10,
+  },
+  simpleCard: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 16,
