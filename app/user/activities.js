@@ -3,7 +3,7 @@ import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import ActivityCard from '../../components/ActivityCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useActivities } from '../../context/ActivitiesContext';
-import * as Progress from 'react-native-progress'; // Make sure to install this
+import * as Progress from 'react-native-progress';
 
 export default function Activities() {
   t = {

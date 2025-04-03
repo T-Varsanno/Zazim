@@ -133,7 +133,24 @@ export const userProfile = {
 };
 
 export const storeItems = [
-  { id: 1, name: 'כובע קסמים', cost: 10 },
-  { id: 2, name: 'נעלי ריצה', cost: 20 },
-  { id: 3, name: 'משקפי שמש', cost: 30 },
+  {
+    storeId: '1',
+    storeName: 'חנות מתנות',
+    items: [
+      { id: 1, name: 'כובע מגניב', cost: 50 },
+      { id: 2, name: 'חולצה בלעדית', cost: 100 },
+      { id: 3, name: '2 חולצה בלעדית', cost: 10 },
+      { id: 4, name: '3 חולצה בלעדית', cost: 5 },
+    ],
+  },
+  {
+    storeId: '2',
+    storeName: 'חנות פרסים מיוחדת',
+    items: [
+      { id: 101, name: 'כובע מגניב', cost: 2 },
+      { id: 102, name: 'חולצה בלעדית', cost: 5 },
+      { id: 103, name: 'מדבקה נדירה', cost: 80 },
+      { id: 104, name: 'ערכת VIP', cost: 150 },
+    ],
+  },
 ];

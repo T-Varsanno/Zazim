@@ -2,16 +2,19 @@ import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import ActivityCard from '../../components/ActivityCard';
 
-import { Dumbbell, BookOpen } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useActivities } from '../../context/ActivitiesContext';
-import {  userProfile } from '../../Data/mockData';
+import { userProfile } from '../../Data/mockData';
+import * as Progress from 'react-native-progress'; 
 
 export default function Index() {
   const { activities, markActivityCompleted } = useActivities();
-  // Show just today's top 2–3 activities
-  const todaysActivities = activities.slice(0, 2);
-  t = {
+  const todaysActivities = activities.slice(0, 6);
+
+  const completed = activities.filter((a) => a.completed);
+  const progress = activities.length === 0 ? 0 : completed.length / activities.length;
+
+  const t = {
     greeting: 'שלום',
     home: 'בית',
     activities: 'פעילויות',
@@ -21,40 +24,46 @@ export default function Index() {
     completed: 'הושלם',
     points: 'נקודות',
     todaysGoal: 'מטרת היום',
-  }
-
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Greeting Header */}
-      <View style={[styles.header]}>
-        <Text style={styles.title}>{t.greeting}, {userProfile.name}!</Text>
-        <View style={styles.levelBadge}>
-          <Text style={styles.levelText}>Level {userProfile.level}</Text>
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Greeting Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>{t.greeting}, {userProfile.name}!</Text>
+          <View style={styles.levelBadge}>
+            <Text style={styles.levelText}>Level {userProfile.level}</Text>
+          </View>
         </View>
-      </View>
 
-      {/* Section Title */}
-      <View style={{ marginTop: 20 }}>
-        <Text style={[styles.sectionTitle]}>
-          {t.todaysGoal}
-        </Text>
+        {/* Progress Bar */}
+        <Progress.Bar
+          progress={progress}
+          width={null}
+          color="#6c47ff"
+          unfilledColor="#e6e6e6"
+          borderWidth={0}
+          height={10}
+          borderRadius={5}
+          style={{ marginVertical: 20 }}
+        />
+
+        {/* Section Title */}
+        <Text style={styles.sectionTitle}>{t.todaysGoal}</Text>
 
         {/* Render each activity card */}
         {todaysActivities.map((activity) => (
           <ActivityCard 
-          key={activity.id} 
-          {...activity}
-          onComplete={() => markActivityCompleted(activity.id)}
+            key={activity.id} 
+            {...activity}
+            onComplete={() => markActivityCompleted(activity.id)}
           />
         ))}
-      </View>
-    </ScrollView>
-  </SafeAreaView>
-);
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
-
 
 const styles = StyleSheet.create({
   container: {
