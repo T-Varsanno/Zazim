@@ -23,7 +23,7 @@ export default function Index() {
     start: 'התחל',
     completed: 'הושלם',
     points: 'נקודות',
-    todaysGoal: 'מטרת היום',
+    todaysGoal: 'מטרות היום',
   };
 
   return (

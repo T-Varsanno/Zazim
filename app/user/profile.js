@@ -73,7 +73,7 @@ export default function Profile() {
 
           {[
             { label: 'פיזי', value: 52, count: userProfile.activityStats.physical, color: '#4CC9F0' },
-            { label: 'קוגניטיבי', value: 34, count: userProfile.activityStats.cognitive, color: '#9B5DE5' },
+            { label: 'חשיבתי', value: 34, count: userProfile.activityStats.cognitive, color: '#9B5DE5' },
             { label: 'חברתי' , value: 14, count: userProfile.activityStats.social, color: '#FF6B6B' },
           ].map((item, index) => (
             <View key={index} style={styles.statBlock}>
