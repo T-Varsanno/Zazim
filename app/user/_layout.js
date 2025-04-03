@@ -18,10 +18,10 @@ function TabLayout() {
   }, []);
 
   const screens = [
-        { name: 'profile', icon: User, label: "profile" },
-        { name: 'achievements', icon: Award, label: "achievements" },
-        { name: 'activities', icon: Dumbbell, label: "activities" },
-        { name: 'index', icon: Home, label: "home" },
+        { name: 'profile', icon: User, label: "פרופיל" },
+        { name: 'achievements', icon: Award, label: "תחרות" },
+        { name: 'activities', icon: Dumbbell, label: "פעילות" },
+        { name: 'index', icon: Home, label: "בית" },
       ]
   return (
     
