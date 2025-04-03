@@ -7,6 +7,7 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useActivities } from '../../context/ActivitiesContext';
 
+
 export default function ExerciseCamera() {
   const [hasPermission, setHasPermission] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
@@ -15,6 +16,7 @@ export default function ExerciseCamera() {
   const cameraRef = useRef(null);
   const captureIntervalRef = useRef(null);
   const sessionId = useRef(`session-${Date.now()}`);
+  const sessionStart = useRef(Date.now()); // ⏱️ NEW: Track start time
   const router = useRouter();
   const { activityId } = useLocalSearchParams();
   const { markActivityCompleted } = useActivities();
@@ -44,6 +46,8 @@ export default function ExerciseCamera() {
 
   const startCapturing = () => {
     if (!cameraRef.current) return;
+    sessionStart.current = Date.now(); // reset session start time
+
     captureIntervalRef.current = setInterval(async () => {
       try {
         const photo = await cameraRef.current.takePhoto({
@@ -56,15 +60,21 @@ export default function ExerciseCamera() {
           encoding: FileSystem.EncodingType.Base64,
         });
 
+        const timestamp = (Date.now() - sessionStart.current) / 1000; // ⏱️ elapsed seconds
+
         await fetch('http://132.73.217.98:8000/upload-frame', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: base64, session_id: sessionId.current }),
+          body: JSON.stringify({
+            image: base64,
+            session_id: sessionId.current,
+            timestamp: timestamp
+          }),
         });
       } catch (err) {
         console.error('Upload error:', err);
       }
-    }, 100); // every 100ms (10 FPS)
+    }, 200); // every 100ms (10 FPS)
   };
 
   const stopCapturing = async () => {
@@ -107,6 +117,7 @@ export default function ExerciseCamera() {
       stopCapturing();
     } else {
       sessionId.current = `session-${Date.now()}`;
+      sessionStart.current = Date.now(); // 🕒 reset when starting new session
       startCapturing();
     }
     setIsCapturing(prev => !prev);
