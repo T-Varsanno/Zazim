@@ -36,7 +36,7 @@ export default function ActivityCard({
   function handleClick() {
     if (category === 'physical') {
       router.push({
-        pathname: '/user/ExerciseCamera',
+        pathname: '/ExerciseCamera',
         params: { activityId: id }, // You’ll need to receive this as a prop too!
       });
     } else {

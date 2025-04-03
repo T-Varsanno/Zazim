@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { mockLeaderboard, userProfile } from '../../Data/mockData';
+import { mockLeaderboard, userProfile } from '../Data/mockData';
 
 export default function Competitions() {
   const [selectedTab, setSelectedTab] = useState('individual');
@@ -104,7 +104,7 @@ export default function Competitions() {
           {isTopThree && <Text style={styles.groupTrophy}>{getTrophy(index)}</Text>}
           <View style={styles.groupInfo}>
             <Text style={styles.groupName}>
-              {index + 1}. {item.name}
+              {index + 1}. {item.name}{isUserGroup && '⭐'}
             </Text>
             <Text style={styles.groupPoints}>{item.points} נק'</Text>
           </View>
@@ -214,7 +214,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'flex-end',
-    marginBottom: 24,
+    marginBottom: 14,
+    paddingTop:10,
   },
   topCard: {
     alignItems: 'center',
@@ -229,11 +230,11 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   podiumSecond: {
-    height: 110,
+    height: 120,
     zIndex: 2,
   },
   podiumThird: {
-    height: 90,
+    height: 100,
     zIndex: 1,
   },
   podiumEmoji: {

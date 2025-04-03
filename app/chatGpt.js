@@ -97,7 +97,7 @@ export default function ChatGPT() {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
           <Image
-            source={require('../../assets/images/Ezra_ai.png')} 
+            source={require('../assets/images/Ezra_ai.png')} 
             style={{ width: 40, height: 40, marginRight: 12, marginBottom: 10 }}
             resizeMode="contain"
           />

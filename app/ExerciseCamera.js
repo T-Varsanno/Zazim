@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system';
 import { PressableOpacity } from 'react-native-pressable-opacity';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useActivities } from '../../context/ActivitiesContext';
+import { useActivities } from '../context/ActivitiesContext';
 
 
 export default function ExerciseCamera() {
@@ -98,7 +98,7 @@ export default function ExerciseCamera() {
       if (result.result === 'movement_detected') {
         Alert.alert('🎉 Success', 'Movement detected!');
         markActivityCompleted(Number(activityId));
-        router.push({ pathname: '/user' });
+        router.push({ pathname: '/' });
       } else {
         Alert.alert('⚠️ Try again', 'No movement detected.');
       }

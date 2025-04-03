@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar, Award, BarChart3, Settings,Trophy } from 'lucide-react-native';
-import { userProfile, achievements } from '../../Data/mockData';
+import { userProfile, achievements } from '../Data/mockData';
 
 export default function Profile() {
   t = {

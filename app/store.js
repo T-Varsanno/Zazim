@@ -7,8 +7,8 @@ import {
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { storeItems, userProfile } from '../../Data/mockData';
-import { useActivities } from '../../context/ActivitiesContext';
+import { storeItems, userProfile } from '../Data/mockData';
+import { useActivities } from '../context/ActivitiesContext';
 import { PressableOpacity } from 'react-native-pressable-opacity';
 
 export default function Store() {
