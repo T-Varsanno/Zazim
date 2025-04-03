@@ -13,7 +13,7 @@ export default function ExerciseCamera() {
   const [cameraPermission, setCameraPermission] = useState('front');
   const cameraRef = useRef(null);
   const captureIntervalRef = useRef(null);
-  const hasDetectedRef = useRef(false); // 👈 Add detection flag
+  const sessionId = useRef(`session-${Date.now()}`);
   const router = useRouter();
   const { activityId } = useLocalSearchParams();
   const { markActivityCompleted } = useActivities();
@@ -24,7 +24,6 @@ export default function ExerciseCamera() {
       stopCapturing();
       setIsCapturing(false);
     }
-
     setCameraPermission(prev => (prev === 'front' ? 'back' : 'front'));
   };
 
@@ -44,9 +43,6 @@ export default function ExerciseCamera() {
 
   const startCapturing = () => {
     if (!cameraRef.current) return;
-
-    hasDetectedRef.current = false; // 👈 Reset detection flag
-
     captureIntervalRef.current = setInterval(async () => {
       try {
         const photo = await cameraRef.current.takePhoto({
@@ -59,43 +55,54 @@ export default function ExerciseCamera() {
           encoding: FileSystem.EncodingType.Base64,
         });
 
-        const response = await fetch('http://192.168.1.139:8000/analyze-frame', {
+        await fetch('http://132.73.217.98:8000/upload-frame', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: base64 }),
+          body: JSON.stringify({ image: base64, session_id: sessionId.current }),
         });
-
-        const result = await response.json();
-        console.log('📸 Pose result:', result);
-
-        // 👇 Only handle the first successful detection
-        if (result.result === 'pose_detected' && !hasDetectedRef.current) {
-          hasDetectedRef.current = true;
-          stopCapturing();
-          Alert.alert('🎉 Success', 'Pose detected!');
-          setIsCapturing(false);
-          markActivityCompleted(Number(activityId));
-          router.push({
-            pathname: '/user/activities',
-          });
-        }
       } catch (err) {
-        console.error('Capture or upload error:', err);
+        console.error('Upload error:', err);
       }
-    }, 500);
+    }, 500); // every 500ms
   };
 
-  const stopCapturing = () => {
+  const stopCapturing = async () => {
     if (captureIntervalRef.current) {
       clearInterval(captureIntervalRef.current);
       captureIntervalRef.current = null;
     }
+
+    try {
+      const res = await fetch('http://132.73.217.98:8000/finish-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId.current }),
+      });
+
+      const result = await res.json();
+      console.log("🧠 Movement result:", result);
+
+      if (result.result === 'movement_detected') {
+        Alert.alert('🎉 Success', 'Movement detected!');
+        markActivityCompleted(Number(activityId));
+        router.push({ pathname: '/user/activities' });
+      } else {
+        Alert.alert('⚠️ Try again', 'No movement detected.');
+      }
+
+    } catch (err) {
+      console.error('Finish session error:', err);
+      Alert.alert('❌ Error', 'Something went wrong while finishing session.');
+    }
+
+    setIsCapturing(false);
   };
 
   const toggleCapture = () => {
     if (isCapturing) {
       stopCapturing();
     } else {
+      sessionId.current = `session-${Date.now()}`;
       startCapturing();
     }
     setIsCapturing(prev => !prev);
@@ -133,7 +140,7 @@ export default function ExerciseCamera() {
           </PressableOpacity>
         )}
         <PressableOpacity onPress={toggleCapture} style={styles.captureButton} disabledOpacity={0.4}>
-          <IonIcon name={isCapturing ? 'square' : 'camera'} color="white" size={28} />
+          <IonIcon name={isCapturing ? 'square' : 'radio-button-on'} color="white" size={28} />
         </PressableOpacity>
       </View>
     </View>
