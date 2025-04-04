@@ -93,7 +93,7 @@ export const userProfile = {
   level: 5,
   currentStreak: 7,
   longestStreak: 14,
-  totalPoints: 30,
+  totalPoints: 100,
   nextLevelPoints: 500,
   activityStats: {
     physical: 12,
@@ -196,20 +196,20 @@ export const storeItems = [
     storeId: '1',
     storeName: 'חנות מתנות',
     items: [
-      { id: 1, name: 'חולצה בלעדית', cost: 50, image: require('../assets/images/shirt.png') },
-      { id: 2, name: 'בקבוק מים', cost: 30, image: require('../assets/images/bottle.png') },
-      { id: 3, name: 'שובר סטנדאפ', cost: 80, image: require('../assets/images/standup_coupon.png') },
+      { id: 1, name: 'שובר סטנדאפ' ,cost: 80},
+      { id: 2, name: 'כרטיס לסרט',cost: 60},
+      { id: 3, name: 'שובר סטנדאפ', cost: 30, image: require('../assets/images/standup_coupon.png') },
       { id: 4, name: 'כרטיס לסרט', cost: 60, image: require('../assets/images/movie_ticket.png') },
     ],
   },
   {
     storeId: '2',
-    storeName: 'חנות פרסים מיוחדת',
+    storeName: 'חנות פרסים ממותגים',
     items: [
-      { id: 101, name: '1כובע מגניב', cost: 2 ,image: require('../assets/images/hat1.png')},
-      { id: 102, name: 'חולצה בלעדית', cost: 5 },
-      { id: 103, name: 'מדבקה נדירה', cost: 80 },
-      { id: 104, name: 'ערכת VIP', cost: 150 },
+      { id: 101, name: 'כובע עם לוגו', cost: 10 ,image: require('../assets/images/hat1.png')},
+      { id: 102, name: 'כובע עם לוגו הר', cost: 10,image: require('../assets/images/hat2.png') },
+      { id: 103, name: 'חולצה עם לוגו', cost: 50, image: require('../assets/images/shirt.png')},
+      { id: 104, name: 'בקבוק מים', cost: 30, image: require('../assets/images/bottle.png') },
     ],
   },
 ];

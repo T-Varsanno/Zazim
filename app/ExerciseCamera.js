@@ -105,7 +105,7 @@ export default function ExerciseCamera() {
       if (result.result === 'movement_detected') {
         setShowSuccessModal(true);
       } else {
-        alert('⚠️ נסה שוב: לא זוהתה תנועה');
+        alert('⚠️ נסה שוב: לא זוהתה התנועה הנכונה');
       }
     } catch (err) {
       console.error('Finish session error:', err);
@@ -175,7 +175,7 @@ export default function ExerciseCamera() {
           <View style={styles.successModal}>
             <Text style={styles.emoji}>🎉</Text>
             <Text style={styles.successText}>הצלחה!</Text>
-            <Text style={styles.successSubText}>זוהתה תנועה 🎯</Text>
+            <Text style={styles.successSubText}>זוהתה תנועה נכונה 🎯</Text>
             <PressableOpacity
               style={styles.successButton}
               onPress={() => {
