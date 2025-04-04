@@ -3,13 +3,14 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   Image,
+  FlatList,
+  ScrollView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { storeItems, userProfile } from '../Data/mockData';
 import { useActivities } from '../context/ActivitiesContext';
-import { PressableOpacity } from 'react-native-pressable-opacity';
 
 export default function Store() {
   const { activities } = useActivities();
@@ -19,6 +20,21 @@ export default function Store() {
     points: userProfile.totalPoints,
     ownedItems: [],
   });
+
+  const SCROLL_THRESHOLD = 5;
+  let startX = 0;
+
+  const handleTouchStart = (e) => {
+    startX = e.nativeEvent.pageX;
+  };
+
+  const handleTouchEnd = (e, onTap) => {
+    const endX = e.nativeEvent.pageX;
+    const distance = Math.abs(endX - startX);
+    if (distance < SCROLL_THRESHOLD) {
+      onTap(); // Only trigger tap if not scrolling
+    }
+  };
 
   const handlePurchase = (item) => {
     if (user.ownedItems.includes(item.id)) return;
@@ -35,18 +51,13 @@ export default function Store() {
     }
   };
 
-  // Flatten storeItems to a single list
-  const flatStoreItems = storeItems.flatMap((store) =>
-    store.items.map((item) => ({ ...item, storeName: store.storeName }))
-  );
-
-  const renderItem = ({ item }) => {
+  const renderItemCard = (item, storeName) => {
+    const fullItem = { ...item, storeName };
     const isOwned = user.ownedItems.includes(item.id);
     const canAfford = user.points >= item.cost;
 
     return (
       <View style={styles.card}>
-        <Text style={styles.storeName}>{item.storeName}</Text>
         <View style={styles.imageContainer}>
           <Image source={item.image} style={styles.itemImage} resizeMode="cover" />
         </View>
@@ -55,18 +66,16 @@ export default function Store() {
           <Text style={styles.itemCost}>
             {isOwned ? '✅ נרכש' : `${item.cost} נקודות`}
           </Text>
-          <PressableOpacity
-            onPress={() => handlePurchase(item)}
-            disabled={isOwned || !canAfford}
-            style={[
-              styles.buyButton,
-              isOwned ? styles.buttonDisabled : {},
-            ]}
+          <TouchableWithoutFeedback
+            onPressIn={handleTouchStart}
+            onPressOut={(e) => handleTouchEnd(e, () => handlePurchase(fullItem))}
           >
-            <Text style={styles.buyButtonText}>
-              {isOwned ? 'נרכש' : 'קנה אותי !'}
-            </Text>
-          </PressableOpacity>
+            <View style={[styles.buyButton, isOwned ? styles.buttonDisabled : {}]}>
+              <Text style={styles.buyButtonText}>
+                {isOwned ? 'נרכש' : 'קנה אותי !'}
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
       </View>
     );
@@ -74,34 +83,40 @@ export default function Store() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <FlatList
-        data={flatStoreItems}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={2}
-        columnWrapperStyle={styles.gridRow}
-        ListHeaderComponent={
-          <View style={styles.header}>
-            <Text style={styles.points}>נקודות נוכחיות: {user.points}</Text>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 16 }}>
+        <View style={styles.header}>
+          <Text style={styles.points}>הנקודות שלי: {user.points}</Text>
+        </View>
+
+        {storeItems.map((store) => (
+          <View key={store.storeName} style={{ marginBottom: 24 }}>
+            <Text style={styles.storeName}>{store.storeName}</Text>
+            <FlatList
+              data={store.items}
+              keyExtractor={(item) => item.id.toString()}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ flexDirection: 'row-reverse' }}
+              renderItem={({ item }) => renderItemCard(item, store.storeName)}
+            />
           </View>
-        }
-        ListFooterComponent={
-          <View style={styles.footerContainer}>
-            <Text style={styles.footer}>צריך עוד נקודות?</Text>
-            <Text style={styles.footerSub}>
-              נשארו לך {activities.filter((a) => !a.completed).length} פעילויות פתוחות להשלמה.
-            </Text>
-          </View>
-        }
-        contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 16 }}
-      />
+        ))}
+
+        <View style={styles.footerContainer}>
+          <Text style={styles.footer}>צריך עוד נקודות?</Text>
+          <Text style={styles.footerSub}>
+            נשארו לך {activities.filter((a) => !a.completed).length} פעילויות פתוחות להשלמה.
+          </Text>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
+    width: 160,
+    height: 240,
     margin: 8,
     backgroundColor: 'white',
     borderRadius: 12,
@@ -114,11 +129,12 @@ const styles = StyleSheet.create({
   },
   storeName: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 16,
     padding: 6,
     paddingLeft: 10,
     color: '#555',
     backgroundColor: '#f5f5f5',
+    textAlign: 'right',
   },
   imageContainer: {
     width: '100%',
@@ -137,6 +153,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginVertical: 4,
+    textAlign: 'center',
   },
   itemCost: {
     fontSize: 16,
@@ -155,9 +172,6 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: '#aaa',
-  },
-  gridRow: {
-    justifyContent: 'space-between',
   },
   header: {
     marginTop: 20,
