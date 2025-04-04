@@ -196,10 +196,10 @@ export const storeItems = [
     storeId: '1',
     storeName: 'חנות מתנות',
     items: [
-      { id: 1, name: 'שובר סטנדאפ' ,cost: 80},
-      { id: 2, name: 'כרטיס לסרט',cost: 60},
-      { id: 3, name: 'שובר סטנדאפ', cost: 30, image: require('../assets/images/standup_coupon.png') },
-      { id: 4, name: 'כרטיס לסרט', cost: 60, image: require('../assets/images/movie_ticket.png') },
+      { id: 1, name: 'שובר סטנדאפ', cost: 30, image: require('../assets/images/standup_coupon.png') },
+      { id: 2, name: 'שובר גבינות ויין',cost: 200,image: require('../assets/images/wine_cheese.png')},
+      { id: 3, name: 'כרטיס לסרט', cost: 60, image: require('../assets/images/movie_ticket.png') },
+      { id: 4, name: 'שובר לקפה' ,cost: 20,image:require('../assets/images/coffee.png')},
     ],
   },
   {
