@@ -1,38 +1,58 @@
 import { Tabs } from 'expo-router';
-import { I18nManager, Platform } from 'react-native';
+import { I18nManager, Platform, View, Image } from 'react-native';
 import { useEffect } from 'react';
 import { ActivitiesProvider } from '../context/ActivitiesContext';
-import { Home, User, Info, Trophy ,ShoppingCart} from 'lucide-react-native';
+import { Home, User, Info, Trophy, ShoppingCart } from 'lucide-react-native';
 import { UserProvider } from '../context/UserContext';
 
 function TabLayout() {
-
   useEffect(() => {
     I18nManager.allowRTL(true);
     I18nManager.forceRTL(true);
-
-    if (Platform.OS === 'android') {
-      // Need to reload app for changes to fully apply
-      // Expo doesn't support live forceRTL, but at least sets layout direction
-    }
   }, []);
 
   const screens = [
-        { name: 'profile', icon: User, label: "פרופיל" },
-        { name: 'store', icon: ShoppingCart, label: "חנות" },
-        { name: 'competitions', icon: Trophy, label: "תחרות" },
-        { name: 'chatGpt', icon: Info, label: "עזרא Ai" },
-        { name: 'index', icon: Home, label: "בית" },
-      ]
+    { name: 'profile', icon: User, label: 'פרופיל' },
+    { name: 'store', icon: ShoppingCart, label: 'חנות' },
+    { name: 'competitions', icon: Trophy, label: 'תחרות' },
+    { name: 'chatGpt', icon: Info, label: 'עזרא Ai' },
+    { name: 'index', icon: Home, label: 'בית' },
+  ];
+
   return (
-    
     <Tabs
-    screenOptions={{ 
-        tabBarActiveTintColor: '#4CC9F0',
-        tabBarLabelStyle: { fontSize: 12 },
-        tabBarStyle: { paddingBottom: 4, height: 60 },
-        headerTitleAlign: 'center',
-      }}
+    screenOptions={{
+      headerStyle: {
+        height: 40, // 👈 This is the line that controls the header height
+      },
+      tabBarActiveTintColor: '#4CC9F0',
+      tabBarInactiveTintColor: '#999',
+      tabBarLabelStyle: {
+        fontSize: 13,
+        fontWeight: 'bold',
+      },
+      tabBarStyle: {
+        paddingBottom: 6,
+        height: 60,
+        backgroundColor: '#fff',
+      },
+      headerTitleAlign: 'right',
+      // ✅ Place icon on left for RTL by using headerRight
+      headerRight: () => (
+        <View style={{ marginRight: 15 }}>
+          <Image
+            source={require('../assets/images/icon.png')} // replace with your own image path
+            style={{
+              width: 140,
+              height: 140,
+              //borderRadius: 24,
+              //borderWidth: 2,
+              //borderColor: '#4CC9F0',
+            }}
+          />
+        </View>
+      ),
+    }}
     >
       {screens.map(({ name, icon: Icon, label }) => (
         <Tabs.Screen
@@ -48,7 +68,7 @@ function TabLayout() {
       <Tabs.Screen
         name="ExerciseCamera"
         options={{
-          href: null, // Don't show in the bottom tab bar
+          href: null,
           tabBarStyle: { display: 'none' },
           headerShown: false,
         }}
@@ -56,20 +76,19 @@ function TabLayout() {
       <Tabs.Screen
         name="resourceLinks"
         options={{
-          href: null, // Don't show in the bottom tab bar
+          href: null,
           tabBarStyle: { display: 'none' },
           headerShown: false,
         }}
       />
     </Tabs>
-    
   );
 }
 
 export default function RootLayout() {
   return (
     <UserProvider>
-      <ActivitiesProvider> 
+      <ActivitiesProvider>
         <TabLayout />
       </ActivitiesProvider>
     </UserProvider>
