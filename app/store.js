@@ -21,7 +21,11 @@ export default function Store() {
     ownedItems: [],
   });
 
-  const SCROLL_THRESHOLD = 5;
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [purchasedItemName, setPurchasedItemName] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const SCROLL_THRESHOLD = 10;
   let startX = 0;
 
   const handleTouchStart = (e) => {
@@ -32,22 +36,30 @@ export default function Store() {
     const endX = e.nativeEvent.pageX;
     const distance = Math.abs(endX - startX);
     if (distance < SCROLL_THRESHOLD) {
-      onTap(); // Only trigger tap if not scrolling
+      onTap();
     }
+  };
+
+  const showError = (msg) => {
+    setErrorMsg(msg);
+    setTimeout(() => {
+      setErrorMsg('');
+    }, 2500);
   };
 
   const handlePurchase = (item) => {
     if (user.ownedItems.includes(item.id)) return;
 
     if (user.points >= item.cost) {
-      alert(`🎁 נרכש: ${item.name}`);
+      setPurchasedItemName(item.name);
+      setShowSuccessModal(true);
       setUser((prev) => ({
         ...prev,
         points: prev.points - item.cost,
         ownedItems: [...prev.ownedItems, item.id],
       }));
     } else {
-      alert('😅 אין מספיק נקודות. השלם עוד פעילויות כדי לצבור נקודות.');
+      showError('😅 אין מספיק נקודות. השלם עוד פעילויות כדי לצבור נקודות.');
     }
   };
 
@@ -109,6 +121,28 @@ export default function Store() {
           </Text>
         </View>
       </ScrollView>
+
+      {/* ✅ Success Modal */}
+      {showSuccessModal && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalEmoji}>🎁</Text>
+            <Text style={styles.modalText}>נרכש: {purchasedItemName}</Text>
+            <TouchableWithoutFeedback onPress={() => setShowSuccessModal(false)}>
+              <View style={styles.modalButton}>
+                <Text style={styles.modalButtonText}>סגור</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </View>
+      )}
+
+      {/* ❌ Error Toast */}
+      {errorMsg !== '' && (
+        <View style={styles.toast}>
+          <Text style={styles.toastText}>{errorMsg}</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -134,7 +168,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     color: '#555',
     backgroundColor: '#f5f5f5',
-    textAlign: 'right',
   },
   imageContainer: {
     width: '100%',
@@ -196,5 +229,64 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#555',
     marginTop: 4,
+  },
+  // Modal Styles
+  modalOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
+  },
+  modalBox: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+    width: '80%',
+    elevation: 10,
+  },
+  modalEmoji: {
+    fontSize: 40,
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalButton: {
+    backgroundColor: '#ff8c00',
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  toast: {
+    position: 'absolute',
+    top: 30,  // ⬅️ top instead of bottom
+    left: 20,
+    right: 20,
+    backgroundColor: '#ff4d4d',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    zIndex: 1000,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+  toastText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });
