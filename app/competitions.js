@@ -183,27 +183,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 10,
-    backgroundColor: '#eee',
-    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderRadius: 30,
     marginHorizontal: 20,
+    padding: 4,
+    elevation: 2,
   },
+  
   toggleButton: {
     flex: 1,
     paddingVertical: 10,
     alignItems: 'center',
-    borderRadius: 10,
-  },
-  toggleActive: {
+    borderRadius: 20,
     backgroundColor: '#fff',
-    elevation: 2,
   },
+  
+  toggleActive: {
+    backgroundColor: '#eee',
+    borderRadius: 20,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  
   toggleText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#888',
-  },
-  toggleTextActive: {
     color: '#000',
+  },
+  
+  toggleTextActive: {
+    color: '#888',
   },
   scrollContainer: {
     paddingHorizontal: 20,

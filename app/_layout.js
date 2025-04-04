@@ -37,6 +37,13 @@ function TabLayout() {
         backgroundColor: '#fff',
       },
       headerTitleAlign: 'right',
+      headerTitleStyle: {
+        fontSize: 22,
+        fontWeight: '900',
+        color: '#4CC9F0',
+        fontFamily: 'System', // Replace with custom font if needed
+        letterSpacing: 1,
+      },
       // ✅ Place icon on left for RTL by using headerRight
       headerRight: () => (
         <View style={{ marginRight: 15 }}>
@@ -44,10 +51,7 @@ function TabLayout() {
             source={require('../assets/images/icon.png')} // replace with your own image path
             style={{
               width: 140,
-              height: 140,
-              //borderRadius: 24,
-              //borderWidth: 2,
-              //borderColor: '#4CC9F0',
+              height: 60,
             }}
           />
         </View>

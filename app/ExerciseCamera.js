@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, Alert, PermissionsAndroid, Platform, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  PermissionsAndroid,
+  Platform,
+  ActivityIndicator,
+} from 'react-native';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import * as FileSystem from 'expo-file-system';
 import { PressableOpacity } from 'react-native-pressable-opacity';
@@ -7,16 +14,16 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useActivities } from '../context/ActivitiesContext';
 
-
 export default function ExerciseCamera() {
   const [hasPermission, setHasPermission] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cameraPermission, setCameraPermission] = useState('front');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const cameraRef = useRef(null);
   const captureIntervalRef = useRef(null);
   const sessionId = useRef(`session-${Date.now()}`);
-  const sessionStart = useRef(Date.now()); // ⏱️ NEW: Track start time
+  const sessionStart = useRef(Date.now());
   const router = useRouter();
   const { activityId } = useLocalSearchParams();
   const { markActivityCompleted } = useActivities();
@@ -27,7 +34,7 @@ export default function ExerciseCamera() {
       stopCapturing();
       setIsCapturing(false);
     }
-    setCameraPermission(prev => (prev === 'front' ? 'back' : 'front'));
+    setCameraPermission((prev) => (prev === 'front' ? 'back' : 'front'));
   };
 
   useEffect(() => {
@@ -46,7 +53,7 @@ export default function ExerciseCamera() {
 
   const startCapturing = () => {
     if (!cameraRef.current) return;
-    sessionStart.current = Date.now(); // reset session start time
+    sessionStart.current = Date.now();
 
     captureIntervalRef.current = setInterval(async () => {
       try {
@@ -60,7 +67,7 @@ export default function ExerciseCamera() {
           encoding: FileSystem.EncodingType.Base64,
         });
 
-        const timestamp = (Date.now() - sessionStart.current) / 1000; // ⏱️ elapsed seconds
+        const timestamp = (Date.now() - sessionStart.current) / 1000;
 
         await fetch('http://132.73.217.98:8000/upload-frame', {
           method: 'POST',
@@ -68,13 +75,13 @@ export default function ExerciseCamera() {
           body: JSON.stringify({
             image: base64,
             session_id: sessionId.current,
-            timestamp: timestamp
+            timestamp: timestamp,
           }),
         });
       } catch (err) {
         console.error('Upload error:', err);
       }
-    }, 200); // every 100ms (10 FPS)
+    }, 200);
   };
 
   const stopCapturing = async () => {
@@ -83,7 +90,7 @@ export default function ExerciseCamera() {
       captureIntervalRef.current = null;
     }
 
-    setLoading(true); // 🌀 Show loading
+    setLoading(true);
 
     try {
       const res = await fetch('http://132.73.217.98:8000/finish-session', {
@@ -93,23 +100,20 @@ export default function ExerciseCamera() {
       });
 
       const result = await res.json();
-      console.log("🧠 Movement result:", result);
+      console.log('🧠 Movement result:', result);
 
       if (result.result === 'movement_detected') {
-        Alert.alert('🎉 Success', 'Movement detected!');
-        markActivityCompleted(Number(activityId));
-        router.push({ pathname: '/' });
+        setShowSuccessModal(true);
       } else {
-        Alert.alert('⚠️ Try again', 'No movement detected.');
+        alert('⚠️ נסה שוב: לא זוהתה תנועה');
       }
-
     } catch (err) {
       console.error('Finish session error:', err);
-      Alert.alert('❌ Error', 'Something went wrong while finishing session.');
+      alert('❌ שגיאה: קרתה תקלה בסיום הסשן');
     }
 
     setIsCapturing(false);
-    setLoading(false); // 🛑 Hide loading
+    setLoading(false);
   };
 
   const toggleCapture = () => {
@@ -117,16 +121,16 @@ export default function ExerciseCamera() {
       stopCapturing();
     } else {
       sessionId.current = `session-${Date.now()}`;
-      sessionStart.current = Date.now(); // 🕒 reset when starting new session
+      sessionStart.current = Date.now();
       startCapturing();
     }
-    setIsCapturing(prev => !prev);
+    setIsCapturing((prev) => !prev);
   };
 
   if (!hasPermission) {
     return (
       <View style={styles.centered}>
-        <Text>Requesting camera permission...</Text>
+        <Text>מבקש הרשאה למצלמה...</Text>
       </View>
     );
   }
@@ -134,7 +138,7 @@ export default function ExerciseCamera() {
   if (!device) {
     return (
       <View style={styles.centered}>
-        <Text>Loading camera...</Text>
+        <Text>טוען מצלמה...</Text>
       </View>
     );
   }
@@ -163,6 +167,26 @@ export default function ExerciseCamera() {
       {loading && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color="#ffffff" />
+        </View>
+      )}
+
+      {showSuccessModal && (
+        <View style={styles.successModalOverlay}>
+          <View style={styles.successModal}>
+            <Text style={styles.emoji}>🎉</Text>
+            <Text style={styles.successText}>הצלחה!</Text>
+            <Text style={styles.successSubText}>זוהתה תנועה 🎯</Text>
+            <PressableOpacity
+              style={styles.successButton}
+              onPress={() => {
+                setShowSuccessModal(false);
+                markActivityCompleted(Number(activityId));
+                router.push({ pathname: '/' });
+              }}
+            >
+              <Text style={styles.successButtonText}>המשך</Text>
+            </PressableOpacity>
+          </View>
         </View>
       )}
     </View>
@@ -210,5 +234,45 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 9999,
+  },
+  successModalOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+  successModal: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 30,
+    alignItems: 'center',
+    width: '80%',
+  },
+  emoji: {
+    fontSize: 40,
+  },
+  successText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginTop: 10,
+    color: '#4CC9F0',
+  },
+  successSubText: {
+    fontSize: 16,
+    color: '#555',
+    marginTop: 4,
+    marginBottom: 20,
+  },
+  successButton: {
+    backgroundColor: '#4CC9F0',
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 20,
+  },
+  successButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

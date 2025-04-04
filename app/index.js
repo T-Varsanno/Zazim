@@ -1,7 +1,6 @@
-import React from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, View, Text, StyleSheet, Modal, Pressable } from 'react-native';
 import ActivityCard from '../components/ActivityCard';
-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useActivities } from '../context/ActivitiesContext';
 import { userProfile } from '../Data/mockData';
@@ -13,6 +12,14 @@ export default function Index() {
 
   const completed = activities.filter((a) => a.completed);
   const progress = activities.length === 0 ? 0 : completed.length / activities.length;
+
+  const [showCongratsModal, setShowCongratsModal] = useState(false);
+
+  useEffect(() => {
+    if (progress === 1) {
+      setShowCongratsModal(true);
+    }
+  }, [progress]);
 
   const t = {
     greeting: 'שלום',
@@ -52,7 +59,7 @@ export default function Index() {
         {/* Section Title */}
         <Text style={styles.sectionTitle}>{t.todaysGoal}</Text>
 
-        {/* Render each activity card */}
+        {/* Activity Cards */}
         {todaysActivities.map((activity) => (
           <ActivityCard 
             key={activity.id} 
@@ -61,6 +68,25 @@ export default function Index() {
           />
         ))}
       </ScrollView>
+
+      {/* 🎉 Congrats Modal */}
+      <Modal
+        transparent
+        animationType="fade"
+        visible={showCongratsModal}
+        onRequestClose={() => setShowCongratsModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.emoji}>🎉</Text>
+            <Text style={styles.modalTitle}>כל הכבוד!</Text>
+            <Text style={styles.modalMessage}>סיימת את כל המשימות שלך להיום 👏</Text>
+            <Pressable style={styles.modalButton} onPress={() => setShowCongratsModal(false)}>
+              <Text style={styles.modalButtonText}>הבנתי 😊</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -94,5 +120,47 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 12,
     color: '#333',
+  },
+  // 🎉 Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 30,
+    alignItems: 'center',
+    width: '80%',
+    elevation: 8,
+  },
+  emoji: {
+    fontSize: 40,
+    marginBottom: 10,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#4CC9F0',
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 16,
+    color: '#444',
+  },
+  modalButton: {
+    backgroundColor: '#4CC9F0',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
