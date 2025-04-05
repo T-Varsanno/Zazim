@@ -1,50 +1,49 @@
-# Welcome to your Expo app 👋
+# 🦵 Zazim - Rehab Together
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+> 🛠️ Built in 24 hours during a hackathon to support injured soldiers returning from war.
 
-## Get started
+## 📱 About the App
 
-1. Install dependencies
+Zazim is a gamified rehab companion app designed for soldiers undergoing physical therapy. Inspired by Duolingo, it motivates users to perform and record their physical therapy exercises at home. Through these activities, users earn points and can:
 
-   ```bash
-   npm install
-   ```
+- 🎯 Complete daily rehab missions.
+- 🧑‍🤝‍🧑 Join teams to earn bonus points together.
+- 🛍️ Use points to “purchase” fun activities from the in-app store.
+- 🤖 Use a built-in LLM chatbot to quickly find bureaucratic resources like paperwork, support phone numbers, and relevant articles to simplify post-war rehab.
 
-2. Start the app
+⚠️ **Note:** This is a concept prototype built in just 24 hours — it's not meant for production or installation. It's a demo of what's possible.
 
-   ```bash
-    npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 🧠 Tech Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- ![React Native](https://img.shields.io/badge/Frontend-React%20Native-61DAFB?logo=react&logoColor=white)
+- ![Python](https://img.shields.io/badge/Backend-Python-3776AB?logo=python&logoColor=white)
+- ![MediaPipe](https://img.shields.io/badge/Motion-MediaPipe-orange)
+- ![DeepSeek](https://img.shields.io/badge/LLM-DeepSeek-blue)
+- ![Hebrew](https://img.shields.io/badge/Language-Hebrew-lightgrey)
+- ![Tested on](https://img.shields.io/badge/Tested-Android%20Emulator%20%7C%20Real%20Device-green)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 🖼️ App Screenshots
 
-When you're ready, run:
+Here’s a look at the app in action:
 
-```bash
-npm run reset-project
-```
+| Home Page | Competitions | Daily Tasks | AI Assistant | Rewards Store |
+|-----------|--------------|-------------|--------------|----------------|
+| ![Home](./Screenshot_Home.png) | ![Competition](./Screenshot_Competition.png) | ![Profile](./Screenshot_Profile.png) | ![ChatBot](./Screenshot_ChetBot.png) | ![Shop](./Screenshot_20250404_081032.png) |
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## Learn more
+---
+## 👥 Contributors
 
-To learn more about developing your project with Expo, look at the following resources:
+This project wouldn’t have happened without an amazing team:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- **Naor Guetta** – Full Stack Developer & Vision  
+- **Tomer Varsanno** – Project Lead & GitHub Repo: [@T-Varsanno](https://github.com/T-Varsanno)  
+- **Michaella Eilat** – UX/UI Design & Chatbot Logic  
+- **Itay Saban** – Motion & Backend Integration  
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
