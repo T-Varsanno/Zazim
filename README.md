@@ -30,20 +30,19 @@ Zazim is a gamified rehab companion app designed for soldiers undergoing physica
 
 Here’s a look at the app in action:
 
-| Home Page | Competitions | Daily Tasks | AI Assistant | Rewards Store |
+| Home Page |  AI Assistant | Competitions | Rewards Store | Profile |
 |-----------|--------------|-------------|--------------|----------------|
-| ![Home](./Screenshot_Home.png) | ![Competition](./Screenshot_Competition.png) | ![Profile](./Screenshot_Profile.png) | ![ChatBot](./Screenshot_ChetBot.png) | ![Shop](./Screenshot_20250404_081032.png) |
-
+|<img src="./assets/images/Screenshot_Home.png" width="150"/> |<img src="./assets/images/Screenshot_ChetBot.png" width="150"/> |<img src="./assets/images/Screenshot_Competition.png" width="150"/> |<img src="./assets/images/Screenshot_Shop.png" width="150"/> |<img src="./assets/images/Screenshot_Profile.png" width="150"/> |
 
 ---
 ## 👥 Contributors
 
 This project wouldn’t have happened without an amazing team:
 
-- **Naor Guetta** – Full Stack Developer & Vision  
-- **Tomer Varsanno** – Project Lead & GitHub Repo: [@T-Varsanno](https://github.com/T-Varsanno)  
-- **Michaella Eilat** – UX/UI Design & Chatbot Logic  
-- **Itay Saban** – Motion & Backend Integration  
+- [**Tomer Varsanno**](https://github.com/T-Varsanno)  
+- [**Naor Guetta**](https://github.com/NaorGuetta)
+- [**Alon Brauner**]  
+- [**Dor Nevo**](https://github.com/DorNevo1)
 
 ---
 
