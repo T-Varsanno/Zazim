@@ -29,8 +29,8 @@ export default function ChatGPT() {
       const result = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
-          Authorization: 'Bearer ***********', // ⬅️ Replace with your actual key
-          'HTTP-Referer': 'https://yourprojectname.com', // optional
+          Authorization: 'Bearer **************************************', 
+          //'HTTP-Referer': 'https://yourprojectname.com', 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
