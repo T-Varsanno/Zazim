@@ -41,7 +41,7 @@ This project wouldn’t have happened without an amazing team:
 
 - [**Tomer Varsanno**](https://github.com/T-Varsanno)  
 - [**Naor Guetta**](https://github.com/NaorGuetta)
-- [**Alon Brauner**]  
+- [**Alon Brauner**](https://github.com/brauner68)
 - [**Dor Nevo**](https://github.com/DorNevo1)
 
 ---
